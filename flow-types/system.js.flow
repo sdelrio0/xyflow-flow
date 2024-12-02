@@ -181,13 +181,25 @@ export type NodeBase<NodeData: Object = Object, NodeType: string = string> = {
   connectable?: boolean,
   deletable?: boolean,
   dragHandle?: string,
-  width?: number,
-  height?: number,
-  initialWidth?: number,
-  initialHeight?: number,
-  parentId?: string,
+  width?: number | null,
+  height?: number | null,
+  parentNode?: string,
   zIndex?: number,
   extent?: 'parent' | CoordinateExtent,
+  expandParent?: boolean,
+  positionAbsolute?: XYPosition,
+  ariaLabel?: string,
+  focusable?: boolean,
+  style?: Object,
+  className?: string,
+  resizing?: boolean,
+};
+
+export type Node<NodeData: Object = Object, NodeType: string = string> = NodeBase<NodeData, NodeType> & {
+  style?: Object,
+  className?: string,
+  resizing?: boolean,
+  focusable?: boolean,
 };
 
 export type NodeHandleBounds = {
@@ -1005,6 +1017,15 @@ export type Edge<EdgeData: Object = Object> = {
   interactionWidth?: number,
 };
 
+export type FitViewParamsBase<NodeType: NodeBase = NodeBase> = {
+  nodes?: Array<NodeType>,
+  padding?: number,
+  minZoom?: number,
+  maxZoom?: number,
+  duration?: number,
+  includeHiddenNodes?: boolean,
+};
+
 export type FitViewOptionsBase<NodeType: NodeBase = NodeBase> = {
   padding?: number,
   includeHiddenNodes?: boolean,
@@ -1012,6 +1033,22 @@ export type FitViewOptionsBase<NodeType: NodeBase = NodeBase> = {
   maxZoom?: number,
   duration?: number,
   nodes?: Array<NodeType | { id: string }>,
+};
+
+export type OnEdgesDelete<EdgeType: Edge = Edge> = (edges: Array<EdgeType>) => void;
+
+export type HandleBounds = {
+  source?: Array<HandleElement>,
+  target?: Array<HandleElement>,
+};
+
+export type HandleElement = {
+  id: string | null,
+  position: Position,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
 };
 
 export type OnNodesChange<NodeType: Node = Node> = (changes: Array<NodeChange<NodeType>>) => void;
