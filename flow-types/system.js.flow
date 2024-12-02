@@ -741,9 +741,50 @@ export type ReactFlowInstance = {
 
 export type UseDragEvent = D3DragEvent<HTMLDivElement, null, SubjectPosition>;
 
+export type D3Selection = any;
+export type D3DragEvent<T, S, D> = {
+  sourceEvent: MouseEvent | TouchEvent,
+  subject: D,
+  target: T,
+  type: string,
+  x: number,
+  y: number,
+  dx: number,
+  dy: number,
+  on: (type: string, listener: (this: S, event: D3DragEvent<T, S, D>, d: D) => void) => D3DragEvent<T, S, D>,
+};
+
+export type SubjectPosition = {
+  x: number,
+  y: number,
+  width?: number,
+  height?: number,
+};
+
 export type ConnectionState<NodeType: InternalNodeBase = InternalNodeBase> =
   | ConnectionInProgress<NodeType>
   | NoConnection;
+
+export type ConnectionInProgress<NodeType: InternalNodeBase = InternalNodeBase> = {
+  connectionStatus: 'valid' | 'invalid',
+  connectionPosition: XYPosition,
+  handleId: string | null,
+  handleType: HandleType,
+  nodeId: string,
+  radius: number,
+  connectionMode: $Values<typeof ConnectionMode>,
+  node?: NodeType,
+};
+
+export type NoConnection = {
+  connectionStatus: null,
+  connectionPosition: null,
+  handleId: null,
+  handleType: null,
+  nodeId: null,
+  radius: null,
+  connectionMode: null,
+};
 
 export type EdgeProps<EdgeType: EdgeBase = EdgeBase> = {
   id: $ElementType<EdgeType, 'id'>,
@@ -975,6 +1016,10 @@ export type FitViewOptionsBase<NodeType: NodeBase = NodeBase> = {
 
 export type OnNodesChange<NodeType: Node = Node> = (changes: Array<NodeChange<NodeType>>) => void;
 
+export type OnEdgesChange<EdgeType: Edge = Edge> = (changes: Array<EdgeChange<EdgeType>>) => void;
+
+export type OnNodesDelete<NodeType: Node = Node> = (nodes: Array<NodeType>) => void;
+
 export type DefaultEdgeOptions = {
   type?: string,
   animated?: boolean,
@@ -1005,3 +1050,29 @@ export type OnBeforeDelete<NodeType: Node = Node, EdgeType: Edge = Edge> = ({
   nodes: Array<NodeType>,
   edges: Array<EdgeType>,
 }) => Promise<boolean | { nodes: Array<NodeType>, edges: Array<EdgeType> }>;
+
+export type InternalNode<NodeType: Node = Node> = NodeType & {
+  computedPosition: XYPosition,
+  handleBounds: HandleBounds,
+  isParent: boolean,
+  width: number,
+  height: number,
+  selected: boolean,
+  dragging: boolean,
+  initialized: boolean,
+  resizing: boolean,
+};
+
+export type EdgeLookup<EdgeType: Edge = Edge> = {
+  [id: string]: EdgeType,
+};
+
+export type ConnectionLookup = {
+  [id: string]: Array<{
+    nodeId: string,
+    handleId: string | null,
+    type: HandleType,
+  }>,
+};
+
+export type OnViewportChange = (viewport: Viewport) => void;
