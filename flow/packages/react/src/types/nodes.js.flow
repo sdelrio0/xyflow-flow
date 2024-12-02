@@ -1,0 +1,64 @@
+// @flow
+
+import type { CSSProperties, MouseEvent as ReactMouseEvent } from 'react';
+import type { NodeBase, InternalNodeBase, NodeProps as NodePropsBase } from '../../system/src/types/nodes';
+import type { CoordinateExtent } from '../../system/src/types/utils';
+import type { OnError } from '../../system/src/types/general';
+
+import type { NodeTypes } from './general';
+
+/**
+ * The node data structure that gets used for the nodes prop.
+ */
+export type Node<NodeData: Object = Object, NodeType: string = string> = {|
+  ...NodeBase<NodeData, NodeType>,
+  style?: CSSProperties,
+  className?: string,
+  resizing?: boolean,
+  focusable?: boolean,
+|};
+
+/**
+ * The node data structure that gets used for internal nodes.
+ * There are some data structures added under node.internal
+ * that are needed for tracking some properties
+ */
+export type InternalNode<NodeType: Node = Node> = InternalNodeBase<NodeType>;
+
+export type NodeMouseHandler<NodeType: Node = Node> = (event: ReactMouseEvent, node: NodeType) => void;
+export type SelectionDragHandler<NodeType: Node = Node> = (event: ReactMouseEvent, nodes: Array<NodeType>) => void;
+export type OnNodeDrag<NodeType: Node = Node> = (
+  event: ReactMouseEvent,
+  node: NodeType,
+  nodes: Array<NodeType>
+) => void;
+
+export type NodeWrapperProps<NodeType: Node> = {|
+  id: string,
+  nodesConnectable: boolean,
+  elementsSelectable: boolean,
+  nodesDraggable: boolean,
+  nodesFocusable: boolean,
+  onClick?: NodeMouseHandler<NodeType>,
+  onDoubleClick?: NodeMouseHandler<NodeType>,
+  onMouseEnter?: NodeMouseHandler<NodeType>,
+  onMouseMove?: NodeMouseHandler<NodeType>,
+  onMouseLeave?: NodeMouseHandler<NodeType>,
+  onContextMenu?: NodeMouseHandler<NodeType>,
+  resizeObserver: ResizeObserver | null,
+  noDragClassName: string,
+  noPanClassName: string,
+  rfId: string,
+  isSelectable: boolean,
+  isDraggable: boolean,
+  isConnectable: boolean,
+  isFocusable: boolean,
+  selectNodesOnDrag: boolean,
+  onError?: OnError,
+|};
+
+export type BuiltInNode = {|
+  label: string,
+|};
+
+export type NodeProps<NodeType: Node = Node> = NodePropsBase<NodeType>;

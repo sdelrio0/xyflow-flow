@@ -1,0 +1,81 @@
+// @flow
+
+import type { ComponentType } from 'react';
+import type {
+  FitViewParamsBase,
+  FitViewOptionsBase,
+  ZoomInOut,
+  ZoomTo,
+  SetViewport,
+  GetZoom,
+  GetViewport,
+  SetCenter,
+  FitBounds,
+  XYPosition,
+  OnBeforeDeleteBase,
+  Connection,
+  NodeChange,
+  EdgeChange,
+} from '../../system/src/types/general';
+
+import type { Node, Edge, ReactFlowInstance, EdgeProps, NodeProps } from '.';
+
+export type OnNodesChange<NodeType: Node = Node> = (changes: Array<NodeChange<NodeType>>) => void;
+export type OnEdgesChange<EdgeType: Edge = Edge> = (changes: Array<EdgeChange<EdgeType>>) => void;
+
+export type OnNodesDelete<NodeType: Node = Node> = (nodes: Array<NodeType>) => void;
+export type OnEdgesDelete<EdgeType: Edge = Edge> = (edges: Array<EdgeType>) => void;
+export type OnDelete<NodeType: Node = Node, EdgeType: Edge = Edge> = (params: {|
+  nodes: Array<NodeType>,
+  edges: Array<EdgeType>,
+|}) => void;
+
+export type NodeTypes = { [key: string]: ComponentType<{|
+  ...NodeProps,
+  data: any,
+  type: any,
+|}> };
+
+export type EdgeTypes = { [key: string]: ComponentType<{|
+  ...EdgeProps,
+  data: any,
+  type: any,
+|}> };
+
+export type UnselectNodesAndEdgesParams = {|
+  nodes?: Array<Node>,
+  edges?: Array<Edge>,
+|};
+
+export type OnSelectionChangeParams = {|
+  nodes: Array<Node>,
+  edges: Array<Edge>,
+|};
+
+export type OnSelectionChangeFunc = (params: OnSelectionChangeParams) => void;
+
+export type FitViewParams<NodeType: Node = Node> = FitViewParamsBase<NodeType>;
+export type FitViewOptions = FitViewOptionsBase;
+export type FitView = (options?: FitViewOptions) => Promise<boolean>;
+
+export type OnInit<NodeType: Node = Node, EdgeType: Edge = Edge> = (
+  reactFlowInstance: ReactFlowInstance<NodeType, EdgeType>
+) => void;
+
+export type ViewportHelperFunctions = {|
+  zoomIn: ZoomInOut,
+  zoomOut: ZoomInOut,
+  zoomTo: ZoomTo,
+  getZoom: GetZoom,
+  setViewport: SetViewport,
+  getViewport: GetViewport,
+  fitView: FitView,
+  setCenter: SetCenter,
+  fitBounds: FitBounds,
+  screenToFlowPosition: (clientPosition: XYPosition, options?: {| snapToGrid: boolean |}) => XYPosition,
+  flowToScreenPosition: (flowPosition: XYPosition) => XYPosition,
+|};
+
+export type OnBeforeDelete<NodeType: Node = Node, EdgeType: Edge = Edge> = OnBeforeDeleteBase<NodeType, EdgeType>;
+
+export type IsValidConnection<EdgeType: Edge = Edge> = (connection: Connection) => boolean;

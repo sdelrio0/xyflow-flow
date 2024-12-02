@@ -1,0 +1,34 @@
+// @flow
+
+import type { Position } from './utils';
+import type { IsValidConnection } from './general';
+
+export type HandleType = 'source' | 'target';
+
+export type Handle = {|
+  id?: string | null,
+  nodeId: string,
+  x: number,
+  y: number,
+  position: Position,
+  type: HandleType,
+  width: number,
+  height: number,
+|};
+
+export type HandleProps = {|
+  /** Type of the handle */
+  type: HandleType,
+  /** Position of the handle */
+  position: Position,
+  /** Should you be able to connect to/from this handle */
+  isConnectable?: boolean,
+  /** Should you be able to connect from this handle */
+  isConnectableStart?: boolean,
+  /** Should you be able to connect to this handle */
+  isConnectableEnd?: boolean,
+  /** Callback if connection is valid */
+  isValidConnection?: IsValidConnection,
+  /** Id of the handle */
+  id?: string,
+|};
