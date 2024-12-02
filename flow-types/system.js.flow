@@ -30,7 +30,7 @@ export type EdgeMarker = {|
 |};
 
 // Event handlers and callbacks
-export type OnMove = (event: MouseEvent | TouchEvent, viewport: Viewport) => void;
+export type OnMove = (event: MouseEvent | TouchEvent | null, viewport: Viewport) => void;
 export type OnMoveStart = OnMove;
 export type OnMoveEnd = OnMove;
 
@@ -189,6 +189,129 @@ export type EdgeRemoveChange = {|
 export type EdgeAddChange = {|
   type: 'add',
   item: Edge,
+|};
+
+// Node types
+export type NodeBase<NodeData: Object = Object, NodeType: string = string> = {|
+  id: string,
+  position: XYPosition,
+  data: NodeData,
+  type?: NodeType,
+  sourcePosition?: Position,
+  targetPosition?: Position,
+  hidden?: boolean,
+  selected?: boolean,
+  dragging?: boolean,
+  draggable?: boolean,
+  selectable?: boolean,
+  connectable?: boolean,
+  deletable?: boolean,
+  dragHandle?: string,
+  width?: number,
+  height?: number,
+  initialWidth?: number,
+  initialHeight?: number,
+  parentId?: string,
+  zIndex?: number,
+  extent?: 'parent' | CoordinateExtent,
+  expandParent?: boolean,
+  positionAbsolute?: XYPosition,
+  ariaLabel?: string,
+  focusable?: boolean,
+  resizing?: boolean,
+|};
+
+export type InternalNodeBase<NodeType> = {|
+  ...NodeBase<any, any>,
+  measured: {|
+    width?: number,
+    height?: number,
+  |},
+  internals: {|
+    positionAbsolute: XYPosition,
+    z: number,
+    userNode: NodeType,
+    handleBounds?: NodeHandleBounds,
+    bounds?: NodeBounds,
+  |},
+|};
+
+export type NodeHandleBounds = {|
+  source: Array<Handle> | null,
+  target: Array<Handle> | null,
+|};
+
+export type NodeBounds = {|
+  width: number | null,
+  height: number | null,
+|};
+
+export type NodeDragItem = {|
+  id: string,
+  position: XYPosition,
+  distance: XYPosition,
+  measured: {|
+    width: number,
+    height: number,
+  |},
+  internals: {|
+    positionAbsolute: XYPosition,
+  |},
+  extent?: 'parent' | CoordinateExtent,
+  parentId?: string,
+  dragging?: boolean,
+  origin?: NodeOrigin,
+  expandParent?: boolean,
+|};
+
+// Connection types
+export type Connection = {|
+  source: string,
+  target: string,
+  sourceHandle: string | null,
+  targetHandle: string | null,
+|};
+
+export type HandleConnection = {|
+  ...Connection,
+  edgeId: string,
+|};
+
+export type ConnectionMode = 'strict' | 'loose';
+
+// Viewport types
+export type ZoomInOut = (options?: ViewportHelperFunctionOptions) => Promise<boolean>;
+export type ZoomTo = (zoomLevel: number, options?: ViewportHelperFunctionOptions) => Promise<boolean>;
+export type GetZoom = () => number;
+export type GetViewport = () => Viewport;
+export type SetViewport = (viewport: Viewport, options?: ViewportHelperFunctionOptions) => Promise<boolean>;
+export type SetCenter = (x: number, y: number, options?: SetCenterOptions) => Promise<boolean>;
+export type FitBounds = (bounds: Rect, options?: FitBoundsOptions) => Promise<boolean>;
+
+// Constants
+export const elementSelectionKeys: Array<string> = ['Enter', ' ', 'Escape'];
+
+export const infiniteExtent: CoordinateExtent = [
+  [Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY],
+  [Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY],
+];
+
+// Additional utility types
+export type CoordinateExtent = [[number, number], [number, number]];
+export type Position = 'top' | 'right' | 'bottom' | 'left';
+export type XYPosition = {|
+  x: number,
+  y: number,
+|};
+
+export type Dimensions = {|
+  width: number,
+  height: number,
+|};
+
+export type Rect = {|
+  ...XYPosition,
+  ...Dimensions,
 |};
 
 // Utils
