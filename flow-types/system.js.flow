@@ -679,3 +679,131 @@ export type Result = {
   connection: Connection | null,
   toHandle: Handle | null,
 };
+
+export type IsValidConnection = (edge: EdgeBase | Connection) => boolean;
+
+export type SnapGrid = [number, number];
+
+export type UpdateNodePositions = (dragItems: Map<string, NodeDragItem | InternalNodeBase>, dragging?: boolean) => void;
+
+export type OnError = (id: string, message: string) => void;
+
+export type OnNodeDrag = (event: MouseEvent | TouchEvent, node: NodeBase, nodes: NodeBase[]) => void;
+
+export type UpdateConnection<NodeType: InternalNodeBase = InternalNodeBase> = (
+  params: ConnectionState<NodeType>
+) => void;
+
+export type PanBy = (delta: XYPosition) => Promise<boolean>;
+
+export type OnConnect = (connection: Connection) => void;
+
+export type OnConnectEnd = (event: MouseEvent | TouchEvent, connectionState: FinalConnectionState) => void;
+
+export type FinalConnectionState<NodeType: InternalNodeBase = InternalNodeBase> = $Rest<
+  ConnectionState<NodeType>,
+  {| inProgress: any |}
+>;
+
+export type ReactFlowInstance = {
+  getViewport: () => Viewport,
+  setViewport: (viewport: Viewport, options?: ViewportHelperFunctionOptions) => Promise<boolean>,
+  getNode: (id: string) => Node | undefined,
+  getNodes: () => Node[],
+  getEdge: (id: string) => Edge | undefined,
+  getEdges: () => Edge[],
+  setNodes: (nodes: Node[] | ((nodes: Node[]) => Node[])) => void,
+  setEdges: (edges: Edge[] | ((edges: Edge[]) => Edge[])) => void,
+  addNodes: (nodes: Node[]) => void,
+  addEdges: (edges: Edge[]) => void,
+  toObject: () => { nodes: Node[], edges: Edge[], viewport: Viewport },
+  deleteElements: (params: { nodes?: Node[], edges?: Edge[] }) => void,
+  getIntersectingNodes: (node: Node | { id: string, width: number, height: number, positionAbsolute: XYPosition }, partially?: boolean) => Node[],
+  isNodeIntersecting: (node: Node | { id: string, width: number, height: number, positionAbsolute: XYPosition }, intersectingNode: Node | { id: string, width: number, height: number, positionAbsolute: XYPosition }, partially?: boolean) => boolean,
+  viewportInitialized: boolean,
+  zoomIn: (options?: ViewportHelperFunctionOptions) => Promise<boolean>,
+  zoomOut: (options?: ViewportHelperFunctionOptions) => Promise<boolean>,
+  zoomTo: (zoomLevel: number, options?: ViewportHelperFunctionOptions) => Promise<boolean>,
+  getZoom: () => number,
+  setCenter: (x: number, y: number, options?: SetCenterOptions) => Promise<boolean>,
+  fitView: (options?: FitViewOptionsBase) => Promise<boolean>,
+  fitBounds: (bounds: Rect, options?: FitBoundsOptions) => Promise<boolean>,
+  project: (position: XYPosition) => XYPosition,
+  screenToFlowPosition: (position: XYPosition) => XYPosition,
+  flowToScreenPosition: (position: XYPosition) => XYPosition,
+};
+
+export type EdgeProps<EdgeType: EdgeBase = EdgeBase> = {
+  id: $ElementType<EdgeType, 'id'>,
+  sourceX: number,
+  sourceY: number,
+  targetX: number,
+  targetY: number,
+  sourcePosition: Position,
+  targetPosition: Position,
+  selected?: $ElementType<EdgeType, 'selected'>,
+  animated?: $ElementType<EdgeType, 'animated'>,
+  style?: $ElementType<EdgeType, 'style'>,
+  data?: $ElementType<EdgeType, 'data'>,
+  markerStart?: $ElementType<EdgeType, 'markerStart'>,
+  markerEnd?: $ElementType<EdgeType, 'markerEnd'>,
+  sourceHandleId?: $ElementType<EdgeType, 'sourceHandle'>,
+  targetHandleId?: $ElementType<EdgeType, 'targetHandle'>,
+  interactionWidth?: number,
+  label?: $ElementType<EdgeType, 'label'>,
+  labelStyle?: $ElementType<EdgeType, 'labelStyle'>,
+  labelShowBg?: $ElementType<EdgeType, 'labelShowBg'>,
+  labelBgStyle?: $ElementType<EdgeType, 'labelBgStyle'>,
+  labelBgPadding?: $ElementType<EdgeType, 'labelBgPadding'>,
+  labelBgBorderRadius?: $ElementType<EdgeType, 'labelBgBorderRadius'>,
+};
+
+export type ReactFlowState = {
+  nodes: Node[],
+  edges: Edge[],
+  onNodesChange?: OnNodesChange,
+  onEdgesChange?: OnEdgesChange,
+  onConnect?: OnConnect,
+  onConnectStart?: OnConnectStart,
+  onConnectEnd?: OnConnectEnd,
+  onClickConnectStart?: OnConnectStart,
+  onClickConnectEnd?: OnConnectEnd,
+  nodesDraggable?: boolean,
+  nodesConnectable?: boolean,
+  nodesFocusable?: boolean,
+  edgesFocusable?: boolean,
+  edgesUpdatable?: boolean,
+  minZoom?: number,
+  maxZoom?: number,
+  nodeExtent?: CoordinateExtent,
+  translateExtent?: CoordinateExtent,
+  connectOnClick?: boolean,
+  defaultEdgeOptions?: DefaultEdgeOptions,
+  fitView?: boolean,
+  fitViewOptions?: FitViewOptions,
+  onNodesDelete?: OnNodesDelete,
+  onEdgesDelete?: OnEdgesDelete,
+  onDelete?: OnDelete,
+  onNodeDrag?: OnNodeDrag,
+  onNodeDragStart?: OnNodeDrag,
+  onNodeDragStop?: OnNodeDrag,
+  onSelectionDrag?: OnSelectionDrag,
+  onSelectionDragStart?: OnSelectionDrag,
+  onSelectionDragStop?: OnSelectionDrag,
+  onMoveStart?: OnMoveStart,
+  onMove?: OnMove,
+  onMoveEnd?: OnMoveEnd,
+  noPanClassName?: string,
+  nodeOrigin?: NodeOrigin,
+  autoPanOnConnect?: boolean,
+  autoPanOnNodeDrag?: boolean,
+  onError?: OnError,
+  connectionRadius?: number,
+  isValidConnection?: IsValidConnection,
+  selectNodesOnDrag?: boolean,
+  nodeDragThreshold?: number,
+  onBeforeDelete?: OnBeforeDelete,
+  debug?: boolean,
+  autoPanSpeed?: number,
+  paneClickDistance?: number,
+};
