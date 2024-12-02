@@ -1,0 +1,182 @@
+// @flow
+
+import type { Node, Edge } from './types';
+import type { StoreApi } from 'zustand';
+import type {
+  ConnectionMode,
+  ConnectionState,
+  CoordinateExtent,
+  InternalNodeUpdate,
+  UpdateNodePositions,
+  NodeOrigin,
+  OnConnect,
+  OnError,
+  OnViewportChange,
+  SelectionRect,
+  SnapGrid,
+  Handle,
+  Transform,
+  PanZoomInstance,
+  PanBy,
+  OnConnectStart,
+  OnConnectEnd,
+  OnSelectionDrag,
+  OnMoveStart,
+  OnMove,
+  OnMoveEnd,
+  UpdateConnection,
+  EdgeLookup,
+  ConnectionLookup,
+  NodeLookup,
+  NodeChange,
+  EdgeChange,
+  ParentLookup,
+  InternalNode,
+} from '@xyflow/system';
+
+type ReactFlowStore<NodeType: Node = Node, EdgeType: Edge = Edge> = {|
+  rfId: string,
+  width: number,
+  height: number,
+  transform: Transform,
+  nodes: Array<NodeType>,
+  nodeLookup: NodeLookup<InternalNode<NodeType>>,
+  parentLookup: ParentLookup<InternalNode<NodeType>>,
+  edges: Array<EdgeType>,
+  edgeLookup: EdgeLookup<EdgeType>,
+  connectionLookup: ConnectionLookup,
+  onNodesChange: ?((changes: Array<NodeChange<NodeType>>) => void),
+  onEdgesChange: ?((changes: Array<EdgeChange<EdgeType>>) => void),
+  hasDefaultNodes: boolean,
+  hasDefaultEdges: boolean,
+  domNode: ?HTMLDivElement,
+  paneDragging: boolean,
+  noPanClassName: string,
+
+  panZoom: ?PanZoomInstance,
+  minZoom: number,
+  maxZoom: number,
+  translateExtent: CoordinateExtent,
+  nodeExtent: CoordinateExtent,
+  nodeOrigin: NodeOrigin,
+  nodeDragThreshold: number,
+
+  nodesSelectionActive: boolean,
+  userSelectionActive: boolean,
+  userSelectionRect: ?SelectionRect,
+
+  connection: ConnectionState<InternalNode<NodeType>>,
+  connectionMode: ConnectionMode,
+  connectionClickStartHandle: ?(
+    {| nodeId: string, id: string |} & {| type: $PropertyType<Handle, 'type'> |}
+  ),
+
+  snapToGrid: boolean,
+  snapGrid: SnapGrid,
+
+  nodesDraggable: boolean,
+  nodesConnectable: boolean,
+  nodesFocusable: boolean,
+  edgesFocusable: boolean,
+  edgesReconnectable: boolean,
+  elementsSelectable: boolean,
+  elevateNodesOnSelect: boolean,
+  elevateEdgesOnSelect: boolean,
+  selectNodesOnDrag: boolean,
+
+  multiSelectionActive: boolean,
+
+  onNodeDragStart?: (event: MouseEvent, node: NodeType, nodes: Array<NodeType>) => void,
+  onNodeDrag?: (event: MouseEvent, node: NodeType, nodes: Array<NodeType>) => void,
+  onNodeDragStop?: (event: MouseEvent, node: NodeType, nodes: Array<NodeType>) => void,
+
+  onSelectionDragStart?: OnSelectionDrag,
+  onSelectionDrag?: OnSelectionDrag,
+  onSelectionDragStop?: OnSelectionDrag,
+
+  onMoveStart?: OnMoveStart,
+  onMove?: OnMove,
+  onMoveEnd?: OnMoveEnd,
+
+  onConnect?: OnConnect,
+  onConnectStart?: OnConnectStart,
+  onConnectEnd?: OnConnectEnd,
+
+  onClickConnectStart?: OnConnectStart,
+  onClickConnectEnd?: OnConnectEnd,
+
+  connectOnClick: boolean,
+  defaultEdgeOptions?: Object,
+
+  fitViewOnInit: boolean,
+  fitViewDone: boolean,
+  fitViewOnInitOptions: ?Object,
+
+  onNodesDelete?: (nodes: Array<NodeType>) => void,
+  onEdgesDelete?: (edges: Array<EdgeType>) => void,
+  onDelete?: (params: {| nodes: Array<NodeType>, edges: Array<EdgeType> |}) => void,
+  onError?: OnError,
+
+  onViewportChangeStart?: OnViewportChange,
+  onViewportChange?: OnViewportChange,
+  onViewportChangeEnd?: OnViewportChange,
+  onBeforeDelete?: (params: {| nodes: Array<NodeType>, edges: Array<EdgeType> |}) => boolean,
+
+  onSelectionChangeHandlers: Array<Function>,
+
+  ariaLiveMessage: string,
+  autoPanOnConnect: boolean,
+  autoPanOnNodeDrag: boolean,
+  autoPanSpeed: number,
+  connectionRadius: number,
+
+  isValidConnection?: Function,
+
+  lib: string,
+  debug: boolean,
+|};
+
+type ReactFlowActions<NodeType: Node, EdgeType: Edge> = {|
+  setNodes: (nodes: Array<NodeType>) => void,
+  setEdges: (edges: Array<EdgeType>) => void,
+  setDefaultNodesAndEdges: (nodes?: Array<NodeType>, edges?: Array<EdgeType>) => void,
+  updateNodeInternals: (updates: Map<string, InternalNodeUpdate>, params?: {| triggerFitView: boolean |}) => void,
+  updateNodePositions: UpdateNodePositions,
+  resetSelectedElements: () => void,
+  unselectNodesAndEdges: (params?: Object) => void,
+  addSelectedNodes: (nodeIds: Array<string>) => void,
+  addSelectedEdges: (edgeIds: Array<string>) => void,
+  setMinZoom: (minZoom: number) => void,
+  setMaxZoom: (maxZoom: number) => void,
+  setTranslateExtent: (translateExtent: CoordinateExtent) => void,
+  setNodeExtent: (nodeExtent: CoordinateExtent) => void,
+  cancelConnection: () => void,
+  updateConnection: UpdateConnection<InternalNode<NodeType>>,
+  reset: () => void,
+  triggerNodeChanges: (changes: Array<NodeChange<NodeType>>) => void,
+  triggerEdgeChanges: (changes: Array<EdgeChange<EdgeType>>) => void,
+  panBy: PanBy,
+  fitView: (options?: Object) => Promise<boolean>,
+  fitViewSync: (options?: Object) => boolean,
+  setPaneClickDistance: (distance: number) => void,
+|};
+
+type ReactFlowState<NodeType: Node = Node, EdgeType: Edge = Edge> = $ReadOnly<{|
+  ...ReactFlowStore<NodeType, EdgeType>,
+  ...ReactFlowActions<NodeType, EdgeType>,
+|}>;
+
+declare export function useStore<StateSlice>(
+  selector: (state: ReactFlowState) => StateSlice,
+  equalityFn?: (a: StateSlice, b: StateSlice) => boolean
+): StateSlice;
+
+declare export function useStoreApi<NodeType: Node = Node, EdgeType: Edge = Edge>(): {|
+  getState: () => ReactFlowState<NodeType, EdgeType>,
+  setState: (
+    state:
+      | $Shape<ReactFlowState<NodeType, EdgeType>>
+      | ((state: ReactFlowState<NodeType, EdgeType>) => $Shape<ReactFlowState<NodeType, EdgeType>>)
+  ) => void,
+  subscribe: (listener: (state: ReactFlowState<NodeType, EdgeType>, prevState: ReactFlowState<NodeType, EdgeType>) => void) => () => void,
+|};
