@@ -1,0 +1,218 @@
+// @flow strict
+
+import type { ComponentType, ElementRef, Node } from 'react';
+
+// Position enum
+export type Position = 'top' | 'right' | 'bottom' | 'left';
+
+// XYPosition type
+export type XYPosition = {|
+  x: number,
+  y: number,
+|};
+
+// XYZPosition type
+export type XYZPosition = {|
+  ...XYPosition,
+  z?: number,
+|};
+
+// Dimensions type
+export type Dimensions = {|
+  width: number,
+  height: number,
+|};
+
+// Rect type
+export type Rect = {|
+  ...XYPosition,
+  ...Dimensions,
+|};
+
+// Box type (used for bounds)
+export type Box = {|
+  x: number,
+  y: number,
+  x2: number,
+  y2: number,
+|};
+
+// Transform type
+export type Transform = [number, number, number];
+
+// ConnectionMode enum
+export type ConnectionMode = 'strict' | 'loose';
+
+// ConnectionLineType enum
+export type ConnectionLineType = 'default' | 'straight' | 'step' | 'smoothstep' | 'bezier';
+
+// MarkerType enum
+export type MarkerType = 'arrow' | 'arrowclosed';
+
+// Basic node type
+export type Node<T = any> = {|
+  id: string,
+  position: XYPosition,
+  type?: string,
+  data: T,
+  style?: Object,
+  className?: string,
+  sourcePosition?: Position,
+  targetPosition?: Position,
+  hidden?: boolean,
+  selected?: boolean,
+  dragging?: boolean,
+  draggable?: boolean,
+  selectable?: boolean,
+  connectable?: boolean,
+  deletable?: boolean,
+  dragHandle?: string,
+  width?: ?number,
+  height?: ?number,
+  parentNode?: string,
+  zIndex?: number,
+  extent?: 'parent' | CoordinateExtent,
+  expandParent?: boolean,
+  positionAbsolute?: XYPosition,
+  ariaLabel?: string,
+  focusable?: boolean,
+  resizing?: boolean,
+|};
+
+// Handle component props
+export type HandleProps = {|
+  id?: string,
+  type: 'source' | 'target',
+  position: Position,
+  isConnectable?: boolean,
+  isConnectableStart?: boolean,
+  isConnectableEnd?: boolean,
+  onConnect?: (params: Connection) => void,
+  isValidConnection?: (connection: Connection) => boolean,
+  children?: React$Node,
+  className?: string,
+  style?: Object,
+  data?: any,
+|};
+
+// Edge type
+export type Edge<T = any> = {|
+  id: string,
+  type?: string,
+  source: string,
+  target: string,
+  sourceHandle?: ?string,
+  targetHandle?: ?string,
+  label?: string | Node,
+  labelStyle?: Object,
+  labelShowBg?: boolean,
+  labelBgStyle?: Object,
+  labelBgPadding?: [number, number],
+  labelBgBorderRadius?: number,
+  style?: Object,
+  animated?: boolean,
+  hidden?: boolean,
+  deletable?: boolean,
+  data?: T,
+  className?: string,
+  sourceNode?: Node,
+  targetNode?: Node,
+  selected?: boolean,
+  markerEnd?: MarkerType,
+  markerStart?: MarkerType,
+  zIndex?: number,
+  ariaLabel?: string,
+  interactionWidth?: number,
+  focusable?: boolean,
+|};
+
+// ReactFlow main props
+export type ReactFlowProps = {|
+  nodes?: Array<Node>,
+  edges?: Array<Edge>,
+  defaultNodes?: Array<Node>,
+  defaultEdges?: Array<Edge>,
+  className?: string,
+  nodeTypes?: { [key: string]: ComponentType<any> },
+  edgeTypes?: { [key: string]: ComponentType<any> },
+  onNodeClick?: (event: MouseEvent, node: Node) => void,
+  onEdgeClick?: (event: MouseEvent, edge: Edge) => void,
+  onInit?: (reactFlowInstance: ReactFlowInstance) => void,
+  onMove?: (event: MouseEvent | TouchEvent, viewport: Viewport) => void,
+  onMoveStart?: (event: MouseEvent | TouchEvent, viewport: Viewport) => void,
+  onMoveEnd?: (event: MouseEvent | TouchEvent, viewport: Viewport) => void,
+  onConnect?: (connection: Connection) => void,
+  onConnectStart?: (event: MouseEvent | TouchEvent, params: OnConnectStartParams) => void,
+  onConnectEnd?: (event: MouseEvent | TouchEvent) => void,
+  onClickConnectStart?: (event: MouseEvent, params: OnConnectStartParams) => void,
+  onClickConnectEnd?: (event: MouseEvent) => void,
+  onNodeMouseEnter?: (event: MouseEvent, node: Node) => void,
+  onNodeMouseMove?: (event: MouseEvent, node: Node) => void,
+  onNodeMouseLeave?: (event: MouseEvent, node: Node) => void,
+  onNodeContextMenu?: (event: MouseEvent, node: Node) => void,
+  onNodeDragStart?: (event: MouseEvent, node: Node, nodes: Node[]) => void,
+  onNodeDrag?: (event: MouseEvent, node: Node, nodes: Node[]) => void,
+  onNodeDragStop?: (event: MouseEvent, node: Node, nodes: Node[]) => void,
+  onNodesDelete?: (nodes: Node[]) => void,
+  onEdgesDelete?: (edges: Edge[]) => void,
+  onSelectionChange?: (params: { nodes: Node[], edges: Edge[] }) => void,
+  onSelectionDragStart?: (event: MouseEvent, nodes: Node[]) => void,
+  onSelectionDrag?: (event: MouseEvent, nodes: Node[]) => void,
+  onSelectionDragStop?: (event: MouseEvent, nodes: Node[]) => void,
+  onSelectionContextMenu?: (event: MouseEvent, nodes: Node[]) => void,
+  connectionMode?: ConnectionMode,
+  connectionLineType?: ConnectionLineType,
+  connectionLineStyle?: Object,
+  connectionLineComponent?: ComponentType<any>,
+  deleteKeyCode?: string | null,
+  selectionKeyCode?: string | null,
+  multiSelectionKeyCode?: string | null,
+  zoomActivationKeyCode?: string | null,
+  snapToGrid?: boolean,
+  snapGrid?: [number, number],
+  onlyRenderVisibleElements?: boolean,
+  nodesDraggable?: boolean,
+  nodesConnectable?: boolean,
+  elementsSelectable?: boolean,
+  selectNodesOnDrag?: boolean,
+  panOnDrag?: boolean | number[],
+  minZoom?: number,
+  maxZoom?: number,
+  defaultViewport?: Viewport,
+  translateExtent?: CoordinateExtent,
+  preventScrolling?: boolean,
+  nodeExtent?: CoordinateExtent,
+  defaultMarkerColor?: string,
+  zoomOnScroll?: boolean,
+  zoomOnPinch?: boolean,
+  panOnScroll?: boolean,
+  panOnScrollSpeed?: number,
+  panOnScrollMode?: PanOnScrollMode,
+  zoomOnDoubleClick?: boolean,
+  projectEdges?: boolean,
+  attributionPosition?: PanelPosition,
+  proOptions?: ProOptions,
+  defaultEdgeOptions?: DefaultEdgeOptions,
+  children?: React$Node,
+|};
+
+// Hooks
+declare export function useNodes<T = any>(): Array<Node<T>>;
+declare export function useEdges<T = any>(): Array<Edge<T>>;
+declare export function useViewport(): Viewport;
+declare export function useReactFlow(): ReactFlowInstance;
+declare export function useStore<T>(selector: (state: ReactFlowState) => T): T;
+declare export function useStoreApi(): ReactFlowState;
+
+// Components
+declare export var ReactFlow: ComponentType<ReactFlowProps>;
+declare export var Handle: ComponentType<HandleProps>;
+declare export var EdgeText: ComponentType<any>;
+declare export var Panel: ComponentType<PanelProps>;
+declare export var ReactFlowProvider: ComponentType<any>;
+
+// Utils
+declare export function applyNodeChanges(changes: Array<NodeChange>, nodes: Array<Node>): Array<Node>;
+declare export function applyEdgeChanges(changes: Array<EdgeChange>, edges: Array<Edge>): Array<Edge>;
+declare export function isNode(element: any): boolean %checks(return true);
+declare export function isEdge(element: any): boolean %checks(return true);
