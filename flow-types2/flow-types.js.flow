@@ -1,5 +1,145 @@
 // @flow
 
+// Base types from utils
+type XYPosition = {|
+  x: number,
+  y: number,
+|};
+
+type Transform = [number, number, number];
+
+type Position = 
+  | 'left'
+  | 'top'
+  | 'right'
+  | 'bottom';
+
+type Dimensions = {|
+  width: number,
+  height: number,
+|};
+
+type Rect = {|
+  ...XYPosition,
+  ...Dimensions,
+|};
+
+type CoordinateExtent = [[number, number], [number, number]];
+
+type Handle = {|
+  id: string,
+  position: Position,
+  nodeId: string,
+|};
+
+type NodeOrigin = [number, number];
+
+// Node types
+type NodeBase = {|
+  id: string,
+  position: XYPosition,
+  data: Object,
+  type?: string,
+  sourcePosition?: Position,
+  targetPosition?: Position,
+  hidden?: boolean,
+  selected?: boolean,
+  dragging?: boolean,
+  draggable?: boolean,
+  selectable?: boolean,
+  connectable?: boolean,
+  deletable?: boolean,
+  dragHandle?: string,
+  width?: number,
+  height?: number,
+  initialWidth?: number,
+  initialHeight?: number,
+  parentId?: string,
+  zIndex?: number,
+  extent?: 'parent' | CoordinateExtent,
+  expandParent?: boolean,
+  ariaLabel?: string,
+  origin?: NodeOrigin,
+  handles?: Array<Handle>,
+  measured?: {|
+    width?: number,
+    height?: number,
+  |},
+|};
+
+type InternalNode<NodeType: NodeBase = NodeBase> = NodeType & {|
+  measured: {|
+    width?: number,
+    height?: number,
+  |},
+  internals: {|
+    positionAbsolute: XYPosition,
+    z: number,
+    userNode: NodeType,
+    handleBounds?: {|
+      source: Array<Handle> | null,
+      target: Array<Handle> | null,
+    |},
+    bounds?: {|
+      width: number | null,
+      height: number | null,
+    |},
+  |},
+|};
+
+// Lookup types
+type NodeLookup<T> = Map<string, T>;
+type ParentLookup<T> = Map<string, Array<T>>;
+type EdgeLookup<T> = Map<string, T>;
+type ConnectionLookup = Map<string, Map<string, {|
+  source: string,
+  target: string,
+  sourceHandle: string | null,
+  targetHandle: string | null,
+  edgeId: string,
+|}>>;
+
+// PanZoom types
+type Viewport = {|
+  x: number,
+  y: number,
+  zoom: number,
+|};
+
+type PanZoomTransformOptions = {|
+  duration?: number,
+|};
+
+type PanZoomInstance = {|
+  update: (params: Object) => void,
+  destroy: () => void,
+  getViewport: () => Viewport,
+  setViewport: (viewport: Viewport, options?: PanZoomTransformOptions) => Promise<any>,
+  setViewportConstrained: (viewport: Viewport, options?: PanZoomTransformOptions) => Promise<any>,
+  fitBounds: (bounds: Rect, options?: PanZoomTransformOptions) => Promise<any>,
+  fitView: (options?: Object) => Promise<any>,
+  panBy: (pos: XYPosition, options?: PanZoomTransformOptions) => Promise<any>,
+  panTo: (pos: XYPosition, options?: PanZoomTransformOptions) => Promise<any>,
+  zoomTo: (zoom: number, options?: PanZoomTransformOptions) => Promise<any>,
+  zoomBy: (delta: number, options?: PanZoomTransformOptions) => Promise<any>,
+|};
+
+// Connection types
+type ConnectionState<NodeType: InternalNode = InternalNode> = {|
+  inProgress: boolean,
+  isValid: boolean | null,
+  from: XYPosition | null,
+  fromHandle: Handle | null,
+  fromPosition: Position | null,
+  fromNode: NodeType | null,
+  to: XYPosition | null,
+  toHandle: Handle | null,
+  toPosition: Position | null,
+  toNode: NodeType | null,
+|};
+
+type OnSelectionDrag = (event: MouseEvent, nodes: Array<Node>) => void;
+
 import type { Node, Edge } from './types';
 import type { StoreApi } from 'zustand';
 import type {
