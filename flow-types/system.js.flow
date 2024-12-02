@@ -70,6 +70,9 @@ export type FitBoundsOptions = {|
   maxZoom?: number,
 |};
 
+// Viewport and scrolling modes
+export type PanOnScrollMode = 'free' | 'vertical' | 'horizontal';
+
 // UI and layout
 export type PanelPosition = 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right';
 
@@ -191,6 +194,20 @@ export type EdgeAddChange = {|
   item: Edge,
 |};
 
+// Edge options
+export type DefaultEdgeOptions = {|
+  type?: string,
+  animated?: boolean,
+  hidden?: boolean,
+  deletable?: boolean,
+  selected?: boolean,
+  data?: Object,
+  style?: Object,
+  className?: string,
+  interactionWidth?: number,
+  focusable?: boolean,
+|};
+
 // Node types
 export type NodeBase<NodeData: Object = Object, NodeType: string = string> = {|
   id: string,
@@ -278,6 +295,32 @@ export type HandleConnection = {|
 |};
 
 export type ConnectionMode = 'strict' | 'loose';
+
+// Store state
+export type ReactFlowState = {|
+  nodes: Array<Node>,
+  edges: Array<Edge>,
+  viewport: Viewport,
+  nodeInternals: Map<string, Node>,
+  edgeInternals: Map<string, Edge>,
+  selectedNodes: Set<string>,
+  selectedEdges: Set<string>,
+  minZoom: number,
+  maxZoom: number,
+  translateExtent: CoordinateExtent,
+  nodeExtent: CoordinateExtent,
+  nodesSelectable: boolean,
+  nodesConnectable: boolean,
+  nodesDraggable: boolean,
+  elementsSelectable: boolean,
+  multiSelectionActive: boolean,
+  width: number,
+  height: number,
+  connectionMode: ConnectionMode,
+  snapGrid: [number, number],
+  snapToGrid: boolean,
+  nodeOrigin: NodeOrigin,
+|};
 
 // Viewport types
 export type ZoomInOut = (options?: ViewportHelperFunctionOptions) => Promise<boolean>;
