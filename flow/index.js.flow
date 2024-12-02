@@ -1,8 +1,41 @@
 // @flow
 
 import type { ComponentType } from 'react';
+import type {
+  Node,
+  Edge,
+  ReactFlowProps,
+  ReactFlowInstance,
+  NodeTypes,
+  EdgeTypes,
+  ConnectionLineComponent,
+  OnNodesChange,
+  OnEdgesChange,
+  OnConnect,
+  OnConnectStart,
+  OnConnectEnd,
+  OnInit,
+  OnMove,
+  OnMoveStart,
+  OnMoveEnd,
+  OnSelectionDragStart,
+  OnSelectionDrag,
+  OnSelectionDragStop,
+  OnSelectionChangeFunc,
+  NodeMouseHandler,
+  EdgeMouseHandler,
+  ConnectionMode,
+  ConnectionLineType,
+  PanOnScrollMode,
+  SelectionMode,
+  FitViewOptions,
+} from './react';
 
-// Export component types
+// Re-export all types from system and react
+export type * from './system';
+export type * from './react';
+
+// Export component declarations
 declare export class ReactFlow extends React$Component<ReactFlowProps> {}
 declare export class Handle extends React$Component<HandleProps> {}
 declare export class EdgeText extends React$Component<EdgeTextProps> {}
@@ -15,158 +48,17 @@ declare export class BaseEdge extends React$Component<BaseEdgeProps> {}
 declare export class ReactFlowProvider extends React$Component<{children: React$Node}> {}
 declare export class Panel extends React$Component<PanelProps> {}
 declare export class EdgeLabelRenderer extends React$Component<{children: React$Node}> {}
-declare export class ViewportPortal extends React$Component<{children: React$Node}> {}
-
-// Export hook types
-declare export function useReactFlow<NodeType: Node = Node, EdgeType: Edge = Edge>(): ReactFlowInstance<NodeType, EdgeType>;
-declare export function useUpdateNodeInternals(): (nodeId: string) => void;
-declare export function useNodes<NodeType: Node = Node>(): Array<NodeType>;
-declare export function useEdges<EdgeType: Edge = Edge>(): Array<EdgeType>;
-declare export function useViewport(): Viewport;
-declare export function useKeyPress(keyCode: KeyCode): boolean;
-declare export function useNodesState<NodeType: Node = Node>(
-  initialNodes: Array<NodeType>
-): [Array<NodeType>, (nodes: Array<NodeType>) => void];
-declare export function useEdgesState<EdgeType: Edge = Edge>(
-  initialEdges: Array<EdgeType>
-): [Array<EdgeType>, (edges: Array<EdgeType>) => void];
-declare export function useStore<NodeType: Node = Node, EdgeType: Edge = Edge>(
-  selector: (state: ReactFlowState<NodeType, EdgeType>) => any,
-  equalityFn?: (a: any, b: any) => boolean
-): any;
-declare export function useStoreApi<NodeType: Node = Node, EdgeType: Edge = Edge>(): {
-  getState: () => ReactFlowState<NodeType, EdgeType>,
-  setState: (state: ReactFlowState<NodeType, EdgeType>) => void,
-};
-declare export function useOnViewportChange(options?: UseOnViewportChangeOptions): void;
-declare export function useOnSelectionChange(options?: UseOnSelectionChangeOptions): void;
-declare export function useNodesInitialized(options?: UseNodesInitializedOptions): boolean;
-declare export function useHandleConnections(): Array<HandleConnection>;
-declare export function useNodesData(): {[nodeId: string]: any};
-declare export function useConnection(): ConnectionState;
-declare export function useInternalNode(): InternalNode;
-declare export function useNodeId(): string;
+declare export class NodeResizer extends React$Component<NodeResizerProps> {}
+declare export class NodeToolbar extends React$Component<NodeToolbarProps> {}
+declare export class Controls extends React$Component<ControlsProps> {}
+declare export class MiniMap extends React$Component<MiniMapProps> {}
+declare export class Background extends React$Component<BackgroundProps> {}
 
 // Export utility functions
-declare export function applyNodeChanges<NodeType: Node = Node>(
-  changes: Array<NodeChange>,
-  nodes: Array<NodeType>
-): Array<NodeType>;
-declare export function applyEdgeChanges<EdgeType: Edge = Edge>(
-  changes: Array<EdgeChange>,
-  edges: Array<EdgeType>
-): Array<EdgeType>;
-declare export function isNode(element: Node | Edge): boolean %checks;
-declare export function isEdge(element: Node | Edge): boolean %checks;
-
-// Export additional components
-declare export var MiniMap: ComponentType<any>;
-declare export var Controls: ComponentType<any>;
-declare export var Background: ComponentType<any>;
-
-// Export all types from system package
-export type {
-  Align,
-  SmoothStepPathOptions,
-  BezierPathOptions,
-  ConnectionLineType,
-  EdgeMarker,
-  EdgeMarkerType,
-  MarkerType,
-  OnMove,
-  OnMoveStart,
-  OnMoveEnd,
-  Connection,
-  ConnectionMode,
-  OnConnectStartParams,
-  OnConnectStart,
-  OnConnect,
-  OnConnectEnd,
-  Viewport,
-  SnapGrid,
-  PanOnScrollMode,
-  ViewportHelperFunctionOptions,
-  SetCenterOptions,
-  FitBoundsOptions,
-  PanelPosition,
-  ProOptions,
-  SelectionMode,
-  SelectionRect,
-  OnError,
-  NodeOrigin,
-  OnSelectionDrag,
-  Position,
-  XYPosition,
-  XYZPosition,
-  Dimensions,
-  Rect,
-  Box,
-  Transform,
-  CoordinateExtent,
-  ColorMode,
-  ColorModeClass,
-  HandleType,
-  ShouldResize,
-  OnResizeStart,
-  OnResize,
-  OnResizeEnd,
-  ControlPosition,
-  ControlLinePosition,
-  ResizeControlVariant,
-  ResizeParams,
-  ResizeParamsWithDirection,
-  ResizeDragEvent,
-  NodeChange,
-  NodeDimensionChange,
-  NodePositionChange,
-  NodeSelectionChange,
-  NodeRemoveChange,
-  NodeAddChange,
-  NodeReplaceChange,
-  EdgeChange,
-  EdgeSelectionChange,
-  EdgeRemoveChange,
-  EdgeAddChange,
-  EdgeReplaceChange,
-  KeyCode,
-  ConnectionState,
-  FinalConnectionState,
-  ConnectionInProgress,
-  NoConnection,
-  Handle,
-} from './packages/system/src/types/general';
-
-// Export utility types
-export type {
-  GetBezierPathParams,
-  GetSmoothStepPathParams,
-  GetStraightPathParams,
-} from './packages/system/src/types/utils';
-
-// Export component types
-export type {
-  ReactFlowProps,
-  HandleProps,
-  EdgeTextProps,
-  StraightEdgeProps,
-  StepEdgeProps,
-  BezierEdgeProps,
-  SimpleBezierEdgeProps,
-  SmoothStepEdgeProps,
-  BaseEdgeProps,
-  PanelProps,
-} from './packages/react/src/types/component-props';
-
-// Export hook types
-export type {
-  UseOnViewportChangeOptions,
-  UseOnSelectionChangeOptions,
-  UseNodesInitializedOptions,
-} from './packages/react/src/types/general';
-
-// Export store types
-export type {
-  ReactFlowState,
-  ReactFlowStore,
-  ReactFlowInstance,
-} from './packages/react/src/types/store';
+declare export function useReactFlow(): ReactFlowInstance;
+declare export function useNodes(): [Array<Node>, OnNodesChange];
+declare export function useEdges(): [Array<Edge>, OnEdgesChange];
+declare export function useViewport(): Viewport;
+declare export function useOnSelectionChange(onChange: OnSelectionChangeFunc): void;
+declare export function useOnViewportChange(onChange: (viewport: Viewport) => void): void;
+declare export function useStore<T>(selector: (state: ReactFlowState) => T): T;

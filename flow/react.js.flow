@@ -1,0 +1,215 @@
+// @flow
+
+import type { CSSProperties, MouseEvent as ReactMouseEvent, ComponentType } from 'react';
+import type {
+  NodeBase,
+  EdgeBase,
+  Handle,
+  HandleType,
+  XYPosition,
+  Position,
+  Connection,
+  ConnectionMode,
+  PanOnScrollMode,
+  SelectionMode,
+  ColorMode,
+  Viewport,
+  CoordinateExtent,
+  NodeChange,
+  EdgeChange,
+  ConnectionState,
+  NodeLookup,
+  EdgeLookup,
+  ConnectionLookup,
+  ParentLookup,
+  InternalNodeBase,
+} from './system';
+
+// Node Types
+export type Node<NodeData: Object = Object, NodeType: string = string> = {|
+  ...NodeBase<NodeData, NodeType>,
+  style?: CSSProperties,
+  className?: string,
+  resizing?: boolean,
+  focusable?: boolean,
+|};
+
+export type InternalNode<NodeType: Node = Node> = InternalNodeBase<NodeType>;
+
+export type NodeMouseHandler<NodeType: Node = Node> = (event: ReactMouseEvent, node: NodeType) => void;
+export type SelectionDragHandler<NodeType: Node = Node> = (event: ReactMouseEvent, nodes: Array<NodeType>) => void;
+export type OnNodeDrag<NodeType: Node = Node> = (
+  event: ReactMouseEvent,
+  node: NodeType,
+  nodes: Array<NodeType>
+) => void;
+
+// Edge Types
+export type Edge<EdgeData: Object = Object, EdgeType: string | void = string | void> = {|
+  ...EdgeBase<EdgeData, EdgeType>,
+  style?: CSSProperties,
+  className?: string,
+  labelStyle?: CSSProperties,
+  labelShowBg?: boolean,
+  labelBgStyle?: CSSProperties,
+  labelBgPadding?: [number, number],
+  labelBgBorderRadius?: number,
+  reconnectable?: boolean | HandleType,
+  focusable?: boolean,
+|};
+
+export type EdgeMouseHandler<EdgeType: Edge = Edge> = (event: ReactMouseEvent, edge: EdgeType) => void;
+
+// Component Props Types
+export type ReactFlowProps<NodeType: Node = Node, EdgeType: Edge = Edge> = {|
+  nodes?: Array<NodeType>,
+  edges?: Array<EdgeType>,
+  defaultNodes?: Array<NodeType>,
+  defaultEdges?: Array<EdgeType>,
+  defaultEdgeOptions?: DefaultEdgeOptions,
+  onNodeClick?: NodeMouseHandler<NodeType>,
+  onNodeDoubleClick?: NodeMouseHandler<NodeType>,
+  onNodeMouseEnter?: NodeMouseHandler<NodeType>,
+  onNodeMouseMove?: NodeMouseHandler<NodeType>,
+  onNodeMouseLeave?: NodeMouseHandler<NodeType>,
+  onNodeContextMenu?: NodeMouseHandler<NodeType>,
+  onNodeDragStart?: OnNodeDrag<NodeType>,
+  onNodeDrag?: OnNodeDrag<NodeType>,
+  onNodeDragStop?: OnNodeDrag<NodeType>,
+  onEdgeClick?: EdgeMouseHandler<EdgeType>,
+  onEdgeDoubleClick?: EdgeMouseHandler<EdgeType>,
+  onEdgeMouseEnter?: EdgeMouseHandler<EdgeType>,
+  onEdgeMouseMove?: EdgeMouseHandler<EdgeType>,
+  onEdgeMouseLeave?: EdgeMouseHandler<EdgeType>,
+  onEdgeContextMenu?: EdgeMouseHandler<EdgeType>,
+  onNodesChange?: OnNodesChange<NodeType>,
+  onEdgesChange?: OnEdgesChange<EdgeType>,
+  onNodesDelete?: OnNodesDelete<NodeType>,
+  onEdgesDelete?: OnEdgesDelete<EdgeType>,
+  onDelete?: OnDelete<NodeType, EdgeType>,
+  onSelectionChange?: OnSelectionChangeFunc,
+  onSelectionDragStart?: SelectionDragHandler<NodeType>,
+  onSelectionDrag?: SelectionDragHandler<NodeType>,
+  onSelectionDragStop?: SelectionDragHandler<NodeType>,
+  onConnect?: OnConnect,
+  onConnectStart?: OnConnectStart,
+  onConnectEnd?: OnConnectEnd,
+  onInit?: OnInit<NodeType, EdgeType>,
+  nodeTypes?: NodeTypes,
+  edgeTypes?: EdgeTypes,
+  connectionMode?: ConnectionMode,
+  connectionLineStyle?: CSSProperties,
+  connectionLineComponent?: ConnectionLineComponent,
+  deleteKeyCode?: string | null,
+  selectionKeyCode?: string | null,
+  multiSelectionKeyCode?: string | null,
+  zoomActivationKeyCode?: string | null,
+  snapToGrid?: boolean,
+  snapGrid?: [number, number],
+  onlyRenderVisibleElements?: boolean,
+  nodesDraggable?: boolean,
+  nodesConnectable?: boolean,
+  nodesFocusable?: boolean,
+  nodeOrigin?: [number, number],
+  edgesFocusable?: boolean,
+  edgesUpdatable?: boolean,
+  elementsSelectable?: boolean,
+  selectNodesOnDrag?: boolean,
+  panOnDrag?: boolean | Array<number>,
+  minZoom?: number,
+  maxZoom?: number,
+  defaultViewport?: Viewport,
+  translateExtent?: CoordinateExtent,
+  preventScrolling?: boolean,
+  nodeExtent?: CoordinateExtent,
+  defaultMarkerColor?: string,
+  zoomOnScroll?: boolean,
+  zoomOnPinch?: boolean,
+  panOnScroll?: boolean,
+  panOnScrollSpeed?: number,
+  panOnScrollMode?: PanOnScrollMode,
+  zoomOnDoubleClick?: boolean,
+  selectionMode?: SelectionMode,
+  fitView?: boolean,
+  fitViewOptions?: FitViewOptions,
+  connectOnClick?: boolean,
+  attributionPosition?: string,
+  proOptions?: ProOptions,
+  elevateNodesOnSelect?: boolean,
+  elevateEdgesOnSelect?: boolean,
+  disableKeyboardA11y?: boolean,
+  autoPanOnNodeDrag?: boolean,
+  autoPanOnConnect?: boolean,
+  autoPanSpeed?: number,
+  onError?: OnError,
+  width?: number,
+  height?: number,
+  colorMode?: ColorMode,
+|};
+
+// Event Handler Types
+export type OnNodesChange<NodeType: Node = Node> = (changes: Array<NodeChange<NodeType>>) => void;
+export type OnEdgesChange<EdgeType: Edge = Edge> = (changes: Array<EdgeChange<EdgeType>>) => void;
+export type OnNodesDelete<NodeType: Node = Node> = (nodes: Array<NodeType>) => void;
+export type OnEdgesDelete<EdgeType: Edge = Edge> = (edges: Array<EdgeType>) => void;
+export type OnDelete<NodeType: Node = Node, EdgeType: Edge = Edge> = (params: {|
+  nodes: Array<NodeType>,
+  edges: Array<EdgeType>,
+|}) => void;
+
+export type OnConnect = (connection: Connection) => void;
+export type OnConnectStart = (event: MouseEvent | TouchEvent) => void;
+export type OnConnectEnd = (event: MouseEvent | TouchEvent) => void;
+
+export type OnInit<NodeType: Node = Node, EdgeType: Edge = Edge> = (
+  reactFlowInstance: ReactFlowInstance<NodeType, EdgeType>
+) => void;
+
+export type OnError = (error: Error) => void;
+
+// Component Types
+export type NodeTypes = { [key: string]: ComponentType<NodeProps> };
+export type EdgeTypes = { [key: string]: ComponentType<EdgeProps> };
+
+export type ConnectionLineComponent = ComponentType<{|
+  connectionLineStyle?: CSSProperties,
+  fromNode: Node,
+  fromHandle: Handle,
+  fromX: number,
+  fromY: number,
+  toX: number,
+  toY: number,
+  fromPosition: Position,
+  toPosition: Position,
+  connectionStatus: 'valid' | 'invalid' | null,
+|}>;
+
+// Instance Types
+export type ReactFlowInstance<NodeType: Node = Node, EdgeType: Edge = Edge> = {|
+  nodes: Array<NodeType>,
+  edges: Array<EdgeType>,
+  viewport: Viewport,
+  getNode: (id: string) => NodeType | void,
+  getEdge: (id: string) => EdgeType | void,
+  setNodes: (nodes: Array<NodeType>) => void,
+  setEdges: (edges: Array<EdgeType>) => void,
+  addNodes: (nodes: Array<NodeType>) => void,
+  addEdges: (edges: Array<EdgeType>) => void,
+  toObject: () => {|
+    nodes: Array<NodeType>,
+    edges: Array<EdgeType>,
+    viewport: Viewport,
+  |},
+  getElements: () => Array<NodeType | EdgeType>,
+  project: (position: XYPosition) => XYPosition,
+  getIntersectingNodes: (node: NodeType, partially?: boolean) => Array<NodeType>,
+  isNodeIntersecting: (node: NodeType, area: {| x: number, y: number, width: number, height: number |}, partially?: boolean) => boolean,
+  fitView: (options?: FitViewOptions) => void,
+  zoomIn: () => void,
+  zoomOut: () => void,
+  zoomTo: (zoomLevel: number) => void,
+  setViewport: (viewport: Viewport) => void,
+  getViewport: () => Viewport,
+  screenToFlowPosition: (position: XYPosition) => XYPosition,
+  flowToScreenPosition: (position: XYPosition) => XYPosition,
+|};
