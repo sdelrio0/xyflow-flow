@@ -269,13 +269,19 @@ export type BezierPathOptions = {
 };
 
 export type EdgeMarker = {
-  type: MarkerType,
+  type: $Values<typeof MarkerType>,
   color?: string,
   width?: number,
   height?: number,
   markerUnits?: string,
   orient?: string,
   strokeWidth?: number,
+};
+
+export type EdgeMarkerType = string | EdgeMarker;
+
+export type MarkerProps = EdgeMarker & {
+  id: string,
 };
 
 export type EdgePosition = {
