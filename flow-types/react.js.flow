@@ -1,0 +1,175 @@
+// @flow strict
+
+/* [packages/react/src/container/ReactFlow.ts] */
+declare export default class ReactFlow extends React$Component<{
+  nodes: Node[],
+  edges: Edge[],
+  defaultNodes?: Node[],
+  defaultEdges?: Edge[],
+  className?: string,
+  nodeTypes?: { [key: string]: React$ComponentType<NodeProps> },
+  edgeTypes?: { [key: string]: React$ComponentType<EdgeProps> },
+  onNodeClick?: (event: MouseEvent, node: Node) => void,
+  onEdgeClick?: (event: MouseEvent, edge: Edge) => void,
+  onInit?: (reactFlowInstance: ReactFlowInstance) => void,
+  onMove?: (event: MouseEvent | TouchEvent | null, viewport: Viewport) => void,
+  onMoveStart?: (event: MouseEvent | TouchEvent | null, viewport: Viewport) => void,
+  onMoveEnd?: (event: MouseEvent | TouchEvent | null, viewport: Viewport) => void,
+  onConnect?: (connection: Connection) => void,
+  onConnectStart?: (event: MouseEvent | TouchEvent, params: OnConnectStartParams) => void,
+  onConnectEnd?: (event: MouseEvent | TouchEvent) => void,
+  onClickConnectStart?: (event: MouseEvent, params: OnConnectStartParams) => void,
+  onClickConnectEnd?: (event: MouseEvent) => void,
+  onNodeDragStart?: (event: MouseEvent, node: Node, nodes: Node[]) => void,
+  onNodeDrag?: (event: MouseEvent, node: Node, nodes: Node[]) => void,
+  onNodeDragStop?: (event: MouseEvent, node: Node, nodes: Node[]) => void,
+  onNodesChange?: (changes: NodeChange[]) => void,
+  onEdgesChange?: (changes: EdgeChange[]) => void,
+  onSelectionChange?: (params: { nodes: Node[], edges: Edge[] }) => void,
+  onSelectionDragStart?: (event: MouseEvent, nodes: Node[]) => void,
+  onSelectionDrag?: (event: MouseEvent, nodes: Node[]) => void,
+  onSelectionDragStop?: (event: MouseEvent, nodes: Node[]) => void,
+  onSelectionStart?: (event: MouseEvent) => void,
+  onSelectionEnd?: (event: MouseEvent) => void,
+  onPaneClick?: (event: MouseEvent) => void,
+  onPaneContextMenu?: (event: MouseEvent) => void,
+  onPaneScroll?: (event: WheelEvent) => void,
+  onError?: (error: Error) => void,
+  onViewportChange?: (viewport: Viewport) => void,
+  connectionMode?: ConnectionMode,
+  connectionRadius?: number,
+  snapToGrid?: boolean,
+  snapGrid?: [number, number],
+  nodesDraggable?: boolean,
+  nodesConnectable?: boolean,
+  elementsSelectable?: boolean,
+  selectNodesOnDrag?: boolean,
+  panOnDrag?: boolean | number[],
+  minZoom?: number,
+  maxZoom?: number,
+  defaultViewport?: Viewport,
+  translateExtent?: CoordinateExtent,
+  preventScrolling?: boolean,
+  nodeExtent?: CoordinateExtent,
+  defaultMarkerColor?: string,
+  zoomOnScroll?: boolean,
+  zoomOnPinch?: boolean,
+  panOnScroll?: boolean,
+  panOnScrollSpeed?: number,
+  panOnScrollMode?: PanOnScrollMode,
+  zoomOnDoubleClick?: boolean,
+  projectNodes?: boolean,
+  attribution?: string,
+  proOptions?: ProOptions,
+}> {}
+
+/* [packages/react/src/components/Handle/index.ts] */
+export type HandleComponentProps = HandleProps & {
+  id?: string,
+  position: Position,
+};
+
+declare export class Handle extends React$Component<HandleComponentProps> {}
+
+/* [packages/react/src/components/Edges/EdgeText.ts] */
+declare export class EdgeText extends React$Component<{
+  x: number,
+  y: number,
+  label: string | React$Node,
+  labelStyle?: Object,
+  labelShowBg?: boolean,
+  labelBgStyle?: Object,
+  labelBgPadding?: [number, number],
+  labelBgBorderRadius?: number,
+}> {}
+
+/* [packages/react/src/components/Edges/StraightEdge.ts] */
+declare export class StraightEdge extends React$Component<EdgeProps> {}
+
+/* [packages/react/src/components/Edges/StepEdge.ts] */
+declare export class StepEdge extends React$Component<EdgeProps> {}
+
+/* [packages/react/src/components/Edges/BezierEdge.ts] */
+declare export class BezierEdge extends React$Component<EdgeProps> {}
+
+/* [packages/react/src/components/Edges/SimpleBezierEdge.ts] */
+declare export class SimpleBezierEdge extends React$Component<EdgeProps> {}
+declare export function getSimpleBezierPath(params: EdgePosition): string;
+
+/* [packages/react/src/components/Edges/SmoothStepEdge.ts] */
+declare export class SmoothStepEdge extends React$Component<EdgeProps> {}
+
+/* [packages/react/src/components/Edges/BaseEdge.ts] */
+declare export class BaseEdge extends React$Component<EdgeProps> {}
+
+/* [packages/react/src/components/ReactFlowProvider.ts] */
+declare export class ReactFlowProvider extends React$Component<{
+  children: React$Node,
+}> {}
+
+/* [packages/react/src/components/Panel.ts] */
+export type PanelProps = {
+  position?: 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right',
+  style?: Object,
+  className?: string,
+  children: React$Node,
+};
+
+declare export class Panel extends React$Component<PanelProps> {}
+
+/* [packages/react/src/components/EdgeLabelRenderer.ts] */
+declare export class EdgeLabelRenderer extends React$Component<{
+  children: React$Node,
+}> {}
+
+/* [packages/react/src/components/ViewportPortal.ts] */
+declare export class ViewportPortal extends React$Component<{
+  children: React$Node,
+}> {}
+
+/* [packages/react/src/hooks/useReactFlow.ts] */
+declare export function useReactFlow(): ReactFlowInstance;
+
+/* [packages/react/src/hooks/useUpdateNodeInternals.ts] */
+declare export function useUpdateNodeInternals(): (nodeId: string) => void;
+
+/* [packages/react/src/hooks/useNodes.ts] */
+declare export function useNodes<NodeType: Node = Node>(): NodeType[];
+
+/* [packages/react/src/hooks/useEdges.ts] */
+declare export function useEdges<EdgeType: Edge = Edge>(): EdgeType[];
+
+/* [packages/react/src/hooks/useViewport.ts] */
+declare export function useViewport(): Viewport;
+
+/* [packages/react/src/hooks/useKeyPress.ts] */
+declare export function useKeyPress(keyCode: string): boolean;
+
+/* [packages/react/src/hooks/useNodesEdgesState.ts] */
+declare export function useNodesState<NodeType: Node = Node>(
+  initialNodes: NodeType[]
+): [NodeType[], (nodes: NodeType[]) => void];
+
+declare export function useEdgesState<EdgeType: Edge = Edge>(
+  initialEdges: EdgeType[]
+): [EdgeType[], (edges: EdgeType[]) => void];
+
+/* [packages/react/src/hooks/useStore.ts] */
+declare export function useStore<T>(selector: (state: ReactFlowState) => T): T;
+declare export function useStoreApi(): ReactFlowStore;
+
+/* [packages/react/src/hooks/useOnViewportChange.ts] */
+export type UseOnViewportChangeOptions = {
+  onChange?: (viewport: Viewport) => void,
+  onStart?: (viewport: Viewport) => void,
+  onEnd?: (viewport: Viewport) => void,
+};
+
+declare export function useOnViewportChange(options?: UseOnViewportChangeOptions): void;
+
+/* [packages/react/src/hooks/useOnSelectionChange.ts] */
+export type UseOnSelectionChangeOptions = {
+  onChange?: (params: { nodes: Node[], edges: Edge[] }) => void,
+};
+
+declare export function useOnSelectionChange(options?: UseOnSelectionChangeOptions): void;

@@ -1,0 +1,446 @@
+// @flow strict
+
+/* [packages/system/src/types.ts] */
+export type CoordinateExtent = [[number, number], [number, number]];
+export type HandleType = 'source' | 'target';
+
+/* [packages/system/src/types/utils.ts] */
+export type Position = 'left' | 'top' | 'right' | 'bottom';
+
+export type XYPosition = {
+  x: number,
+  y: number,
+};
+
+export type XYZPosition = {
+  x: number,
+  y: number,
+  z: number,
+};
+
+export type Dimensions = {
+  width: number,
+  height: number,
+};
+
+export type Rect = Dimensions & XYPosition;
+
+export type Box = XYPosition & {
+  x2: number,
+  y2: number,
+};
+
+export type Transform = [number, number, number];
+
+/* [packages/system/src/types/general.ts] */
+export type Project = (position: XYPosition) => XYPosition;
+
+export type OnMove = (event: MouseEvent | TouchEvent | null, viewport: Viewport) => void;
+export type OnMoveStart = OnMove;
+export type OnMoveEnd = OnMove;
+
+export type ZoomInOut = (options?: ViewportHelperFunctionOptions) => Promise<boolean>;
+export type ZoomTo = (zoomLevel: number, options?: ViewportHelperFunctionOptions) => Promise<boolean>;
+export type GetZoom = () => number;
+export type GetViewport = () => Viewport;
+export type SetViewport = (viewport: Viewport, options?: ViewportHelperFunctionOptions) => Promise<boolean>;
+export type SetCenter = (x: number, y: number, options?: SetCenterOptions) => Promise<boolean>;
+export type FitBounds = (bounds: Rect, options?: FitBoundsOptions) => Promise<boolean>;
+
+export type Connection = {
+  source: string,
+  target: string,
+  sourceHandle: string | null,
+  targetHandle: string | null,
+};
+
+export type HandleConnection = Connection & {
+  edgeId: string,
+};
+
+export type ConnectionMode = 'strict' | 'loose';
+
+export type OnConnectStartParams = {
+  nodeId: string | null,
+  handleId: string | null,
+  handleType: HandleType | null,
+};
+
+export type OnConnectStart = (event: MouseEvent | TouchEvent, params: OnConnectStartParams) => void;
+
+export type Viewport = {
+  x: number,
+  y: number,
+  zoom: number,
+};
+
+export type ViewportHelperFunctionOptions = {
+  duration?: number,
+};
+
+export type SetCenterOptions = {
+  zoom?: number,
+};
+
+export type FitBoundsOptions = {
+  padding?: number,
+};
+
+export type PanOnScrollMode = 'free' | 'vertical' | 'horizontal';
+
+export type SelectionMode = 'partial' | 'full';
+
+export type SelectionRect = {
+  startX: number,
+  startY: number,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+};
+
+export type ProOptions = {
+  account?: string,
+  hideAttribution: boolean,
+};
+
+/* [packages/system/src/types/nodes.ts] */
+export type NodeBase<NodeData: Object = Object, NodeType: string = string> = {
+  id: string,
+  position: XYPosition,
+  data: NodeData,
+  type?: NodeType,
+  sourcePosition?: Position,
+  targetPosition?: Position,
+  hidden?: boolean,
+  selected?: boolean,
+  dragging?: boolean,
+  draggable?: boolean,
+  selectable?: boolean,
+  connectable?: boolean,
+  deletable?: boolean,
+  dragHandle?: string,
+  width?: number,
+  height?: number,
+  initialWidth?: number,
+  initialHeight?: number,
+  parentId?: string,
+  zIndex?: number,
+  extent?: 'parent' | CoordinateExtent,
+};
+
+export type NodeHandleBounds = {
+  source: Handle[] | null,
+  target: Handle[] | null,
+};
+
+export type NodeBounds = {
+  width: number | null,
+  height: number | null,
+};
+
+export type NodeDragItem = {
+  id: string,
+  position: XYPosition,
+  distance: XYPosition,
+  measured: {
+    width: number,
+    height: number,
+  },
+  width: number,
+  height: number,
+  internals: {
+    positionAbsolute: XYPosition,
+  },
+  positionAbsolute: XYPosition,
+  extent?: 'parent' | CoordinateExtent,
+  parentId?: string,
+  dragging?: boolean,
+  origin?: NodeOrigin,
+  expandParent?: boolean,
+};
+
+/* [packages/system/src/types/edges.ts] */
+export type EdgeBase<EdgeData: Object = Object, EdgeType: string | void = string | void> = {
+  id: string,
+  type?: EdgeType,
+  source: string,
+  target: string,
+  sourceHandle?: string | null,
+  targetHandle?: string | null,
+  animated?: boolean,
+  hidden?: boolean,
+  deletable?: boolean,
+  selectable?: boolean,
+  data?: EdgeData,
+  selected?: boolean,
+  markerStart?: EdgeMarkerType,
+  markerEnd?: EdgeMarkerType,
+  zIndex?: number,
+  ariaLabel?: string,
+  interactionWidth?: number,
+};
+
+export type SmoothStepPathOptions = {
+  offset?: number,
+  borderRadius?: number,
+};
+
+export type StepPathOptions = {
+  offset?: number,
+};
+
+export type BezierPathOptions = {
+  curvature?: number,
+};
+
+export type EdgeMarker = {
+  type: MarkerType,
+  color?: string,
+  width?: number,
+  height?: number,
+  markerUnits?: string,
+  orient?: string,
+  strokeWidth?: number,
+};
+
+export type EdgePosition = {
+  sourceX: number,
+  sourceY: number,
+  targetX: number,
+  targetY: number,
+  sourcePosition: Position,
+  targetPosition: Position,
+};
+
+export type ConnectionLineType = 'default' | 'straight' | 'step' | 'smoothstep' | 'simplebezier';
+export type MarkerType = 'arrow' | 'arrowclosed';
+
+/* [packages/system/src/types/handles.ts] */
+export type Handle = {
+  id?: string | null,
+  nodeId: string,
+  x: number,
+  y: number,
+  position: Position,
+  type: HandleType,
+  width: number,
+  height: number,
+};
+
+export type HandleProps = {
+  type: HandleType,
+  position: Position,
+  isConnectable?: boolean,
+  isConnectableStart?: boolean,
+  isConnectableEnd?: boolean,
+  isValidConnection?: IsValidConnection,
+  id?: string,
+};
+
+/* [packages/system/src/types/panzoom.ts] */
+export type OnDraggingChange = (dragging: boolean) => void;
+export type OnTransformChange = (transform: Transform) => void;
+
+export type PanZoomParams = {
+  domNode: Element,
+  minZoom: number,
+  maxZoom: number,
+  paneClickDistance: number,
+  viewport: Viewport,
+  translateExtent: CoordinateExtent,
+  onDraggingChange: OnDraggingChange,
+  onPanZoomStart?: OnPanZoom,
+  onPanZoom?: OnPanZoom,
+  onPanZoomEnd?: OnPanZoom,
+};
+
+export type PanZoomTransformOptions = {
+  duration?: number,
+};
+
+export type OnPanZoom = (event: MouseEvent | TouchEvent | null, viewport: Viewport) => void;
+
+export type PanZoomUpdateOptions = {
+  noWheelClassName: string,
+  noPanClassName: string,
+  onPaneContextMenu?: (event: MouseEvent) => void,
+  preventScrolling: boolean,
+  panOnScroll: boolean,
+  panOnDrag: boolean | number[],
+  panOnScrollMode: PanOnScrollMode,
+  panOnScrollSpeed: number,
+  userSelectionActive: boolean,
+  zoomOnPinch: boolean,
+  zoomOnScroll: boolean,
+  zoomOnDoubleClick: boolean,
+  zoomActivationKeyPressed: boolean,
+  lib: string,
+  onTransformChange: OnTransformChange,
+};
+
+export type PanZoomInstance = {
+  update: (params: PanZoomUpdateOptions) => void,
+  destroy: () => void,
+  getViewport: () => Viewport,
+  setViewport: (viewport: Viewport, options?: PanZoomTransformOptions) => Promise<any>,
+  setViewportConstrained: (viewport: Viewport, options?: PanZoomTransformOptions) => Promise<any>,
+};
+
+/* [packages/system/src/types/changes.ts] */
+export type NodeDimensionChange = {
+  id: string,
+  type: 'dimensions',
+  dimensions?: Dimensions,
+  resizing?: boolean,
+  setAttributes?: boolean,
+};
+
+export type NodePositionChange = {
+  id: string,
+  type: 'position',
+  position?: XYPosition,
+  positionAbsolute?: XYPosition,
+  dragging?: boolean,
+};
+
+export type NodeSelectionChange = {
+  id: string,
+  type: 'select',
+  selected: boolean,
+};
+
+export type NodeRemoveChange = {
+  id: string,
+  type: 'remove',
+};
+
+export type NodeAddChange<NodeType: NodeBase = NodeBase> = {
+  item: NodeType,
+  type: 'add',
+  index?: number,
+};
+
+export type NodeReplaceChange<NodeType: NodeBase = NodeBase> = {
+  id: string,
+  item: NodeType,
+  type: 'replace',
+};
+
+export type NodeChange<NodeType: NodeBase = NodeBase> =
+  | NodeDimensionChange
+  | NodePositionChange
+  | NodeSelectionChange
+  | NodeRemoveChange
+  | NodeAddChange<NodeType>
+  | NodeReplaceChange<NodeType>;
+
+export type EdgeSelectionChange = {
+  id: string,
+  type: 'select',
+  selected: boolean,
+};
+
+export type EdgeRemoveChange = {
+  id: string,
+  type: 'remove',
+};
+
+export type EdgeAddChange<EdgeType: EdgeBase = EdgeBase> = {
+  item: EdgeType,
+  type: 'add',
+  index?: number,
+};
+
+export type EdgeReplaceChange<EdgeType: EdgeBase = EdgeBase> = {
+  id: string,
+  item: EdgeType,
+  type: 'replace',
+};
+
+export type EdgeChange<EdgeType: EdgeBase = EdgeBase> =
+  | EdgeSelectionChange
+  | EdgeRemoveChange
+  | EdgeAddChange<EdgeType>
+  | EdgeReplaceChange<EdgeType>;
+
+/* [packages/system/src/constants.ts] */
+export const errorMessages: {
+  error001: () => string,
+  error002: () => string,
+  error003: (nodeType: string) => string,
+  error004: () => string,
+  error005: () => string,
+  error006: () => string,
+  error007: (id: string) => string,
+  error008: (handleType: HandleType, params: { id: string, sourceHandle: string | null, targetHandle: string | null }) => string,
+  error009: (type: string) => string,
+  error010: () => string,
+  error011: (edgeType: string) => string,
+  error012: (id: string) => string,
+};
+
+/* [packages/system/src/utils/general.ts] */
+declare export function clamp(val: number, min?: number, max?: number): number;
+
+declare export function clampPosition(
+  position?: XYPosition,
+  extent: CoordinateExtent,
+  dimensions: $Shape<Dimensions>
+): XYPosition;
+
+declare export function clampPositionToParent<NodeType: NodeBase>(
+  childPosition: XYPosition,
+  childDimensions: Dimensions,
+  parent: InternalNodeBase<NodeType>
+): XYPosition;
+
+declare export function getBoundsOfBoxes(box1: Box, box2: Box): Box;
+
+declare export function rectToBox(rect: Rect): Box;
+
+declare export function boxToRect(box: Box): Rect;
+
+declare export function nodeToRect(node: InternalNodeBase | NodeBase, nodeOrigin?: NodeOrigin): Rect;
+
+declare export function nodeToBox(node: InternalNodeBase | NodeBase, nodeOrigin?: NodeOrigin): Box;
+
+declare export function getBoundsOfRects(rect1: Rect, rect2: Rect): Rect;
+
+declare export function getOverlappingArea(rectA: Rect, rectB: Rect): number;
+
+declare export function isRectObject(obj: any): boolean %checks(obj instanceof Rect);
+
+declare export function isNumeric(n: any): boolean %checks(typeof n === 'number');
+
+declare export function snapPosition(position: XYPosition, snapGrid?: SnapGrid): XYPosition;
+
+declare export function pointToRendererPoint(
+  point: XYPosition,
+  transform: Transform,
+  snapToGrid?: boolean,
+  snapGrid?: SnapGrid
+): XYPosition;
+
+declare export function rendererPointToPoint(point: XYPosition, transform: Transform): XYPosition;
+
+declare export function getViewportForBounds(
+  bounds: Rect,
+  width: number,
+  height: number,
+  minZoom: number,
+  maxZoom: number,
+  padding: number
+): Viewport;
+
+declare export function isMacOs(): boolean;
+
+declare export function isCoordinateExtent(extent?: CoordinateExtent | 'parent'): boolean %checks(extent instanceof CoordinateExtent);
+
+declare export function getNodeDimensions(node: {
+  measured?: { width?: number, height?: number },
+  width?: number,
+  height?: number,
+  initialWidth?: number,
+  initialHeight?: number,
+}): { width: number, height: number };
