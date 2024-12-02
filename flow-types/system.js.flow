@@ -739,6 +739,12 @@ export type ReactFlowInstance = {
   flowToScreenPosition: (position: XYPosition) => XYPosition,
 };
 
+export type UseDragEvent = D3DragEvent<HTMLDivElement, null, SubjectPosition>;
+
+export type ConnectionState<NodeType: InternalNodeBase = InternalNodeBase> =
+  | ConnectionInProgress<NodeType>
+  | NoConnection;
+
 export type EdgeProps<EdgeType: EdgeBase = EdgeBase> = {
   id: $ElementType<EdgeType, 'id'>,
   sourceX: number,
@@ -813,3 +819,189 @@ export type ReactFlowState = {
   autoPanSpeed?: number,
   paneClickDistance?: number,
 };
+
+export type NodeTypes = { [key: string]: React$ComponentType<NodeProps & { data: any, type: any }> };
+export type EdgeTypes = { [key: string]: React$ComponentType<EdgeProps & { data: any, type: any }> };
+
+export type UnselectNodesAndEdgesParams = {
+  nodes?: Array<Node>,
+  edges?: Array<Edge>,
+};
+
+export type OnSelectionChangeParams = {
+  nodes: Array<Node>,
+  edges: Array<Edge>,
+};
+
+export type OnSelectionChangeFunc = (params: OnSelectionChangeParams) => void;
+
+export type FitViewParams<NodeType: Node = Node> = FitViewParamsBase<NodeType>;
+export type FitViewOptions<NodeType: Node = Node> = FitViewOptionsBase<NodeType>;
+export type FitView = (fitViewOptions?: FitViewOptions) => Promise<boolean>;
+export type OnInit<NodeType: Node = Node, EdgeType: Edge = Edge> = (
+  reactFlowInstance: ReactFlowInstance<NodeType, EdgeType>
+) => void;
+
+export type ViewportHelperFunctions = {
+  zoomIn: ZoomInOut,
+  zoomOut: ZoomInOut,
+  zoomTo: ZoomTo,
+  getZoom: GetZoom,
+  setViewport: SetViewport,
+  getViewport: GetViewport,
+  fitView: FitView,
+  setCenter: SetCenter,
+  fitBounds: FitBounds,
+  screenToFlowPosition: (clientPosition: XYPosition, options?: { snapToGrid: boolean }) => XYPosition,
+  flowToScreenPosition: (flowPosition: XYPosition) => XYPosition,
+};
+
+export type ReactFlowStore<NodeType: Node = Node, EdgeType: Edge = Edge> = {
+  rfId: string,
+  width: number,
+  height: number,
+  transform: Transform,
+  nodes: Array<NodeType>,
+  nodeLookup: NodeLookup<InternalNode<NodeType>>,
+  parentLookup: ParentLookup<InternalNode<NodeType>>,
+  edges: Array<EdgeType>,
+  edgeLookup: EdgeLookup<EdgeType>,
+  connectionLookup: ConnectionLookup,
+  onNodesChange: ?OnNodesChange<NodeType>,
+  onEdgesChange: ?OnEdgesChange<EdgeType>,
+  hasDefaultNodes: boolean,
+  hasDefaultEdges: boolean,
+  domNode: ?HTMLDivElement,
+  paneDragging: boolean,
+  noPanClassName: string,
+  panZoom: ?PanZoomInstance,
+  minZoom: number,
+  maxZoom: number,
+  translateExtent: CoordinateExtent,
+  nodeExtent: CoordinateExtent,
+  nodeOrigin: NodeOrigin,
+  nodeDragThreshold: number,
+  nodesSelectionActive: boolean,
+  userSelectionActive: boolean,
+  userSelectionRect: ?SelectionRect,
+  connection: ConnectionState<InternalNode<NodeType>>,
+  connectionMode: $Values<typeof ConnectionMode>,
+  connectionClickStartHandle: ?(Pick<Handle, 'nodeId' | 'id'> & Required<Pick<Handle, 'type'>>),
+  snapToGrid: boolean,
+  snapGrid: SnapGrid,
+  nodesDraggable: boolean,
+  nodesConnectable: boolean,
+  nodesFocusable: boolean,
+  edgesFocusable: boolean,
+  edgesReconnectable: boolean,
+  elementsSelectable: boolean,
+  elevateNodesOnSelect: boolean,
+  elevateEdgesOnSelect: boolean,
+  selectNodesOnDrag: boolean,
+  multiSelectionActive: boolean,
+  onNodeDragStart?: OnNodeDrag<NodeType>,
+  onNodeDrag?: OnNodeDrag<NodeType>,
+  onNodeDragStop?: OnNodeDrag<NodeType>,
+  onSelectionDragStart?: OnSelectionDrag,
+  onSelectionDrag?: OnSelectionDrag,
+  onSelectionDragStop?: OnSelectionDrag,
+  onMoveStart?: OnMoveStart,
+  onMove?: OnMove,
+  onMoveEnd?: OnMoveEnd,
+  onConnect?: OnConnect,
+  onConnectStart?: OnConnectStart,
+  onConnectEnd?: OnConnectEnd,
+  onClickConnectStart?: OnConnectStart,
+  onClickConnectEnd?: OnConnectEnd,
+  connectOnClick: boolean,
+  defaultEdgeOptions?: DefaultEdgeOptions,
+  fitViewOnInit: boolean,
+  fitViewDone: boolean,
+  fitViewOnInitOptions: ?FitViewOptions,
+  onNodesDelete?: OnNodesDelete<NodeType>,
+  onEdgesDelete?: OnEdgesDelete<EdgeType>,
+  onDelete?: OnDelete<NodeType, EdgeType>,
+  onError?: OnError,
+  onViewportChangeStart?: OnViewportChange,
+  onViewportChange?: OnViewportChange,
+  onViewportChangeEnd?: OnViewportChange,
+  onBeforeDelete?: OnBeforeDelete<NodeType, EdgeType>,
+  onSelectionChangeHandlers: Array<OnSelectionChangeFunc>,
+  ariaLiveMessage: string,
+  autoPanOnConnect: boolean,
+  autoPanOnNodeDrag: boolean,
+  autoPanSpeed: number,
+  connectionRadius: number,
+  isValidConnection?: IsValidConnection<EdgeType>,
+  lib: string,
+  debug: boolean,
+};
+
+export type Edge<EdgeData: Object = Object> = {
+  id: string,
+  source: string,
+  target: string,
+  sourceHandle?: string | null,
+  targetHandle?: string | null,
+  type?: string,
+  animated?: boolean,
+  hidden?: boolean,
+  deletable?: boolean,
+  selectable?: boolean,
+  selected?: boolean,
+  data?: EdgeData,
+  style?: Object,
+  label?: string | React$Node,
+  labelStyle?: Object,
+  labelShowBg?: boolean,
+  labelBgStyle?: Object,
+  labelBgPadding?: [number, number],
+  labelBgBorderRadius?: number,
+  markerStart?: EdgeMarkerType,
+  markerEnd?: EdgeMarkerType,
+  zIndex?: number,
+  ariaLabel?: string,
+  interactionWidth?: number,
+};
+
+export type FitViewOptionsBase<NodeType: NodeBase = NodeBase> = {
+  padding?: number,
+  includeHiddenNodes?: boolean,
+  minZoom?: number,
+  maxZoom?: number,
+  duration?: number,
+  nodes?: Array<NodeType | { id: string }>,
+};
+
+export type OnNodesChange<NodeType: Node = Node> = (changes: Array<NodeChange<NodeType>>) => void;
+
+export type DefaultEdgeOptions = {
+  type?: string,
+  animated?: boolean,
+  hidden?: boolean,
+  deletable?: boolean,
+  selectable?: boolean,
+  data?: Object,
+  style?: Object,
+  label?: string | React$Node,
+  labelStyle?: Object,
+  labelShowBg?: boolean,
+  labelBgStyle?: Object,
+  labelBgPadding?: [number, number],
+  labelBgBorderRadius?: number,
+  markerStart?: EdgeMarkerType,
+  markerEnd?: EdgeMarkerType,
+  zIndex?: number,
+  className?: string,
+  interactionWidth?: number,
+};
+
+export type OnDelete<NodeType: Node = Node, EdgeType: Edge = Edge> = ({
+  nodes: Array<NodeType>,
+  edges: Array<EdgeType>,
+}) => void;
+
+export type OnBeforeDelete<NodeType: Node = Node, EdgeType: Edge = Edge> = ({
+  nodes: Array<NodeType>,
+  edges: Array<EdgeType>,
+}) => Promise<boolean | { nodes: Array<NodeType>, edges: Array<EdgeType> }>;
