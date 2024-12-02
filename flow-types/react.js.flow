@@ -2,24 +2,83 @@
 
 import type { ComponentType, ElementRef, Node as ReactNode } from 'react';
 import type {
-  NodeBase,
-  XYPosition,
-  Position,
-  Connection,
-  ConnectionMode,
-  HandleType,
+  // Core types
+  Project,
   OnMove,
   OnMoveStart,
   OnMoveEnd,
+  ZoomInOut,
+  ZoomTo,
+  GetZoom,
+  GetViewport,
+  SetViewport,
+  SetCenter,
+  FitBounds,
+  
+  // Node types
+  NodeBase,
+  InternalNodeBase,
+  NodeHandleBounds,
+  NodeBounds,
+  NodeDragItem,
+  NodeOrigin,
+  
+  // Connection types
+  Connection,
+  HandleConnection,
+  ConnectionMode,
+  OnConnectStartParams,
+  OnConnectStart,
+  OnConnectEnd,
+  
+  // Viewport types
   Viewport,
+  ViewportHelperFunctionOptions,
+  SetCenterOptions,
+  FitBoundsOptions,
+  
+  // Panel and UI types
   PanelPosition,
+  ProOptions,
+  
+  // Selection types
+  SelectionMode,
   SelectionRect,
+  
+  // Error handling
   OnError,
-  CoordinateExtent,
+  
+  // Color modes
   ColorMode,
   ColorModeClass,
+  
+  // Constants
+  elementSelectionKeys,
+  infiniteExtent,
+  
+  // Utility types
+  CoordinateExtent,
+  HandleType,
+  Position,
+  XYPosition,
   Dimensions,
-  NodeDragItem,
+  Rect,
+  
+  // Change types
+  NodeChange,
+  NodeDimensionChange,
+  NodePositionChange,
+  NodeSelectionChange,
+  NodeRemoveChange,
+  NodeAddChange,
+  NodeReplaceChange,
+  EdgeChange,
+  EdgeSelectionChange,
+  EdgeRemoveChange,
+  EdgeAddChange,
+  
+  // Edge types
+  GetBezierPathParams,
 } from './system';
 
 // React Flow Component Props
