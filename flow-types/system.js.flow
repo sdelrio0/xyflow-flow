@@ -105,6 +105,52 @@ export type ProOptions = {
 };
 
 /* [packages/system/src/types/nodes.ts] */
+export type NodeOrigin = [number, number];
+
+export type OnSelectionDrag = (event: MouseEvent, nodes: NodeBase[]) => void;
+
+export type NodeHandle = $Rest<$Shape<Handle>, {| nodeId: any |}>;
+
+export type Align = 'center' | 'start' | 'end';
+
+export type NodeLookup<NodeType: InternalNodeBase = InternalNodeBase> = Map<string, NodeType>;
+export type ParentLookup<NodeType: InternalNodeBase = InternalNodeBase> = Map<string, Map<string, NodeType>>;
+
+export type InternalNodeBase<NodeType: NodeBase = NodeBase> = NodeType & {
+  measured: {
+    width?: number,
+    height?: number,
+  },
+  internals: {
+    positionAbsolute: XYPosition,
+    z: number,
+    userNode: NodeType,
+    handleBounds?: NodeHandleBounds,
+    bounds?: NodeBounds,
+  },
+};
+
+export type NodeProps<NodeType: NodeBase> = $ReadOnly<{
+  id: $ElementType<NodeType, 'id'>,
+  data: $ElementType<NodeType, 'data'>,
+  width?: $ElementType<NodeType, 'width'>,
+  height?: $ElementType<NodeType, 'height'>,
+  sourcePosition?: $ElementType<NodeType, 'sourcePosition'>,
+  targetPosition?: $ElementType<NodeType, 'targetPosition'>,
+  selected?: $ElementType<NodeType, 'selected'>,
+  dragHandle?: $ElementType<NodeType, 'dragHandle'>,
+  selectable?: $ElementType<NodeType, 'selectable'>,
+  deletable?: $ElementType<NodeType, 'deletable'>,
+  draggable?: $ElementType<NodeType, 'draggable'>,
+  parentId?: $ElementType<NodeType, 'parentId'>,
+  type: $NonMaybeType<$ElementType<NodeType, 'type'>>,
+  dragging: boolean,
+  zIndex: number,
+  isConnectable: boolean,
+  positionAbsoluteX: number,
+  positionAbsoluteY: number,
+}>;
+
 export type NodeBase<NodeData: Object = Object, NodeType: string = string> = {
   id: string,
   position: XYPosition,
@@ -134,7 +180,7 @@ export type NodeHandleBounds = {
   target: Handle[] | null,
 };
 
-export type NodeBounds = {
+export type NodeBounds = XYPosition & {
   width: number | null,
   height: number | null,
 };
@@ -364,6 +410,15 @@ export type EdgeChange<EdgeType: EdgeBase = EdgeBase> =
   | EdgeAddChange<EdgeType>
   | EdgeReplaceChange<EdgeType>;
 
+/* [packages/system/src/utils/types.ts] */
+export type Optional<T, K: $Keys<T>> = $Rest<T, K> & $Shape<$ObjMap<K, <V>(v: V) => V>>;
+
+export type ParentExpandChild = {
+  id: string,
+  parentId: string,
+  rect: Rect,
+};
+
 /* [packages/system/src/constants.ts] */
 export const errorMessages: {
   error001: () => string,
@@ -444,3 +499,155 @@ declare export function getNodeDimensions(node: {
   initialWidth?: number,
   initialHeight?: number,
 }): { width: number, height: number };
+
+/* [packages/system/src/utils/graph.ts] */
+declare export function isEdgeBase(element: any): boolean %checks(element instanceof EdgeBase);
+declare export function isNodeBase(element: any): boolean %checks(element instanceof NodeBase);
+declare export function isInternalNodeBase(element: any): boolean %checks(element instanceof InternalNodeBase);
+
+declare export function getOutgoers<NodeType: NodeBase, EdgeType: EdgeBase>(
+  node: NodeType | { id: string },
+  nodes: NodeType[],
+  edges: EdgeType[]
+): NodeType[];
+
+declare export function getIncomers<NodeType: NodeBase, EdgeType: EdgeBase>(
+  node: NodeType | { id: string },
+  nodes: NodeType[],
+  edges: EdgeType[]
+): NodeType[];
+
+declare export function getNodePositionWithOrigin(node: NodeBase, nodeOrigin?: NodeOrigin): XYPosition;
+
+export type GetNodesBoundsParams<NodeType: NodeBase> = {
+  nodeOrigin?: NodeOrigin,
+  nodeLookup?: NodeLookup<InternalNodeBase<NodeType>>,
+};
+
+declare export function getNodesBounds<NodeType: NodeBase>(
+  nodes: (NodeType | InternalNodeBase<NodeType> | string)[],
+  params?: GetNodesBoundsParams<NodeType>
+): Rect;
+
+export type GetInternalNodesBoundsParams<NodeType: NodeBase> = {
+  useRelativePosition?: boolean,
+  filter?: (node: NodeType) => boolean,
+};
+
+declare export function getNodesInside<NodeType: NodeBase>(
+  nodes: Map<string, InternalNodeBase<NodeType>>,
+  rect: Rect,
+  transform?: Transform,
+  partially?: boolean,
+  excludeNonSelectableNodes?: boolean
+): InternalNodeBase<NodeType>[];
+
+declare export function getConnectedEdges<NodeType: NodeBase, EdgeType: EdgeBase>(
+  nodes: NodeType[],
+  edges: EdgeType[]
+): EdgeType[];
+
+/* [packages/system/src/xydrag/XYDrag.ts] */
+export type OnDrag = (event: UseDragEvent, dragItems: NodeDragItem[]) => void;
+
+export type StoreItems = {
+  nodes: NodeBase[],
+  nodeLookup: Map<string, InternalNodeBase>,
+  edges: EdgeBase[],
+  nodeExtent: CoordinateExtent,
+  snapGrid: SnapGrid,
+  snapToGrid: boolean,
+  nodeOrigin: NodeOrigin,
+  multiSelectionActive: boolean,
+  domNode?: Element | null,
+  transform: Transform,
+  autoPanOnNodeDrag: boolean,
+  nodesDraggable: boolean,
+  selectNodesOnDrag: boolean,
+  nodeDragThreshold: number,
+  panBy: PanBy,
+  unselectNodesAndEdges: (params?: { nodes?: NodeBase[], edges?: EdgeBase[] }) => void,
+  nodes?: NodeBase[],
+  edges?: EdgeBase[],
+  onError?: OnError,
+  onNodeDragStart?: OnNodeDrag,
+  onNodeDrag?: OnNodeDrag,
+  onNodeDragStop?: OnNodeDrag,
+  onSelectionDragStart?: OnSelectionDrag,
+  onSelectionDrag?: OnSelectionDrag,
+  onSelectionDragStop?: OnSelectionDrag,
+  updateNodePositions: UpdateNodePositions,
+  autoPanSpeed?: number,
+};
+
+export type XYDragParams = {
+  getStoreItems: () => StoreItems,
+  onDragStart?: OnDrag,
+  onDrag?: OnDrag,
+  onDragStop?: OnDrag,
+  onNodeMouseDown?: (id: string) => void,
+  autoPanSpeed?: number,
+};
+
+export type XYDragInstance = {
+  update: (params: DragUpdateParams) => void,
+  destroy: () => void,
+};
+
+export type DragUpdateParams = {
+  noDragClassName?: string,
+  handleSelector?: string,
+  isSelectable?: boolean,
+  nodeId?: string,
+  domNode: Element,
+  nodeClickDistance?: number,
+};
+
+/* [packages/system/src/xyhandle/types.ts] */
+export type OnPointerDownParams = {
+  autoPanOnConnect: boolean,
+  connectionMode: ConnectionMode,
+  connectionRadius: number,
+  domNode: HTMLDivElement | null,
+  handleId: string | null,
+  nodeId: string,
+  isTarget: boolean,
+  nodeLookup: NodeLookup,
+  lib: string,
+  flowId: string | null,
+  edgeUpdaterType?: HandleType,
+  updateConnection: UpdateConnection,
+  panBy: PanBy,
+  cancelConnection: () => void,
+  onConnectStart?: OnConnectStart,
+  onConnect?: OnConnect,
+  onConnectEnd?: OnConnectEnd,
+  isValidConnection?: IsValidConnection,
+  onReconnectEnd?: (evt: MouseEvent | TouchEvent, connectionState: FinalConnectionState) => void,
+  getTransform: () => Transform,
+  getFromHandle: () => Handle | null,
+  autoPanSpeed?: number,
+};
+
+export type IsValidParams = {
+  handle: $Shape<Handle> & { nodeId: string, id: string | null, type: HandleType } | null,
+  connectionMode: ConnectionMode,
+  fromNodeId: string,
+  fromHandleId: string | null,
+  fromType: HandleType,
+  isValidConnection?: IsValidConnection,
+  doc: Document | ShadowRoot,
+  lib: string,
+};
+
+export type XYHandleInstance = {
+  onPointerDown: (event: MouseEvent | TouchEvent, params: OnPointerDownParams) => void,
+  isValid: (event: MouseEvent | TouchEvent, params: IsValidParams) => Result,
+};
+
+export type Result = {
+  handleDomNode: Element | null,
+  isValid: boolean,
+  connection: Connection | null,
+  toHandle: Handle | null,
+};
