@@ -723,7 +723,7 @@ export type FinalConnectionState<NodeType: InternalNodeBase = InternalNodeBase> 
   {| inProgress: any |}
 >;
 
-export type ReactFlowInstance = {
+export type ReactFlowInstance<NodeType: Node = Node, EdgeType: Edge = Edge> = {
   getViewport: () => Viewport,
   setViewport: (viewport: Viewport, options?: ViewportHelperFunctionOptions) => Promise<boolean>,
   getNode: (id: string) => Node | undefined,
@@ -749,6 +749,70 @@ export type ReactFlowInstance = {
   project: (position: XYPosition) => XYPosition,
   screenToFlowPosition: (position: XYPosition) => XYPosition,
   flowToScreenPosition: (position: XYPosition) => XYPosition,
+};
+
+export type ReactFlowJsonObject<NodeType: Node = Node, EdgeType: Edge = Edge> = {
+  nodes: Array<NodeType>,
+  edges: Array<EdgeType>,
+  viewport: Viewport,
+};
+
+export type DeleteElementsOptions = {
+  nodes?: Array<Node | { id: $ElementType<Node, 'id'> }>,
+  edges?: Array<Edge | { id: $ElementType<Edge, 'id'> }>,
+};
+
+export type GeneralHelpers<NodeType: Node = Node, EdgeType: Edge = Edge> = {
+  getNodes: () => Array<NodeType>,
+  setNodes: (payload: Array<NodeType> | ((nodes: Array<NodeType>) => Array<NodeType>)) => void,
+  addNodes: (payload: Array<NodeType> | NodeType) => void,
+  getNode: (id: string) => ?NodeType,
+  getInternalNode: (id: string) => ?InternalNode<NodeType>,
+  getEdges: () => Array<EdgeType>,
+  setEdges: (payload: Array<EdgeType> | ((edges: Array<EdgeType>) => Array<EdgeType>)) => void,
+  addEdges: (payload: Array<EdgeType> | EdgeType) => void,
+  getEdge: (id: string) => ?EdgeType,
+  toObject: () => ReactFlowJsonObject<NodeType, EdgeType>,
+  deleteElements: (params: DeleteElementsOptions) => Promise<{
+    deletedNodes: Array<Node>,
+    deletedEdges: Array<Edge>,
+  }>,
+  getIntersectingNodes: (
+    node: NodeType | { id: $ElementType<Node, 'id'> } | Rect,
+    partially?: boolean,
+    nodes?: Array<NodeType>
+  ) => Array<NodeType>,
+  isNodeIntersecting: (node: NodeType | { id: $ElementType<Node, 'id'> } | Rect, area: Rect, partially?: boolean) => boolean,
+  updateNode: (
+    id: string,
+    nodeUpdate: $Shape<NodeType> | ((node: NodeType) => $Shape<NodeType>),
+    options?: { replace: boolean }
+  ) => void,
+  updateNodeData: (
+    id: string,
+    dataUpdate: $Shape<$ElementType<NodeType, 'data'>> | ((node: NodeType) => $Shape<$ElementType<NodeType, 'data'>>),
+    options?: { replace: boolean }
+  ) => void,
+  updateEdge: (
+    id: string,
+    edgeUpdate: $Shape<EdgeType> | ((edge: EdgeType) => $Shape<EdgeType>),
+    options?: { replace: boolean }
+  ) => void,
+  updateEdgeData: (
+    id: string,
+    dataUpdate: $Shape<$ElementType<EdgeType, 'data'>> | ((edge: EdgeType) => $Shape<$ElementType<EdgeType, 'data'>>),
+    options?: { replace: boolean }
+  ) => void,
+  getNodesBounds: (nodes: Array<NodeType | InternalNode | string>) => Rect,
+  getHandleConnections: ({
+    type: HandleType,
+    nodeId: string,
+    id?: string | null,
+  }) => Array<HandleConnection>,
+};
+
+export type ReactFlowInstance<NodeType: Node = Node, EdgeType: Edge = Edge> = GeneralHelpers<NodeType, EdgeType> & $Diff<ViewportHelperFunctions, {| initialized: any |}> & {
+  viewportInitialized: boolean,
 };
 
 export type UseDragEvent = D3DragEvent<HTMLDivElement, null, SubjectPosition>;
